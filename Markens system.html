@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0053)file:///C:/Users/Bruger/Downloads/mark-system_12.html -->
+<!-- saved from url=(0053)file:///C:/Users/Bruger/Downloads/mark-system_13.html -->
 <html lang="da"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1545,17 +1545,37 @@ function renderFrivillige() {
 
   // Alle frivillige liste
   const el = document.getElementById('vol-liste-admin');
-  el.innerHTML = frivillige.map(v => `
-    <div class="card card-sm" style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
-      <div style="width:38px;height:38px;border-radius:50%;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;font-weight:500;font-size:13px;flex-shrink:0">
-        ${v.navn.slice(0,2).toUpperCase()}
+  const alle = ['Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Lørdag','Søndag'];
+  el.innerHTML = frivillige.map(v => {
+    const vDage = (v.dage||'').split(',').map(d=>d.trim()).filter(Boolean);
+    return `
+    <div class="card" style="margin-bottom:10px" id="vol-kort-${v.id}">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:38px;height:38px;border-radius:50%;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;font-weight:500;font-size:13px;flex-shrink:0">
+          ${v.navn.slice(0,2).toUpperCase()}
+        </div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:500">${v.navn}</div>
+          <div style="font-size:12px;color:var(--text2)">${vDage.length ? vDage.join(', ') : '— ingen dage sat'}${v.note?' · '+v.note:''}</div>
+        </div>
+        <button class="btn" style="font-size:12px;padding:5px 10px" onclick="toggleRedigerVol(${v.id})"><i class="ti ti-pencil"></i> Rediger</button>
+        <button class="btn" style="font-size:12px;padding:5px 10px;color:var(--red)" onclick="deleteVol(${v.id})"><i class="ti ti-trash"></i></button>
       </div>
-      <div style="flex:1">
-        <div style="font-size:14px;font-weight:500">${v.navn}</div>
-        <div style="font-size:12px;color:var(--text2)">Dage: ${v.dage||'—'}${v.note?' · '+v.note:''}</div>
+      <!-- Rediger panel -->
+      <div id="vol-rediger-${v.id}" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+        <div style="font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:500">Arbejdsdage</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+          ${alle.map(d => `
+            <label style="display:flex;align-items:center;gap:5px;font-size:13px;cursor:pointer;font-weight:400">
+              <input type="checkbox" value="${d}" name="vol-edit-dag-${v.id}" 
+                ${vDage.map(x=>x.toLowerCase()).includes(d.toLowerCase())?'checked':''} 
+                style="width:15px;height:15px"> ${d}
+            </label>`).join('')}
+        </div>
+        <button class="btn btn-primary" style="font-size:12px" onclick="gemRedigerVol(${v.id})"><i class="ti ti-check"></i> Gem dage</button>
       </div>
-      <button class="btn" style="font-size:12px;padding:5px 10px;color:var(--red)" onclick="deleteVol(${v.id})"><i class="ti ti-trash"></i></button>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function getDagNote(volId, dato) {
@@ -1633,6 +1653,20 @@ function markerOpgaveUdfort(id) {
   const o = volOpgaver.find(x => x.id === id);
   if (o) o.udfort = true;
   renderFrivillige();
+  saveData();
+}
+
+function toggleRedigerVol(id) {
+  const el = document.getElementById(`vol-rediger-${id}`);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function gemRedigerVol(id) {
+  const checked = [...document.querySelectorAll(`input[name="vol-edit-dag-${id}"]:checked`)].map(cb => cb.value);
+  const v = frivillige.find(x => x.id === id);
+  if (v) v.dage = checked.join(', ');
+  renderFrivillige();
+  renderDag();
   saveData();
 }
 
