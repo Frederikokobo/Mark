@@ -360,7 +360,7 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--g
     <div class="sec active" id="page-dag">
       <div class="topbar">
         <div>
-          <div class="page-title">God morgen! <span id="dag-dato"></span></div>
+          <div class="page-title"><span id="dag-hilsen">God morgen!</span> <span id="dag-dato"></span></div>
           <div class="page-sub">Morgenbriefing 08:15 · Frivillige slutter 12:00</div>
         </div>
         <button class="btn btn-green" onclick="genererUgeplan()"><i class="ti ti-refresh"></i> Opdater</button>
@@ -386,6 +386,29 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--g
           <div class="stat-value" id="dag-vanding" style="font-size:16px;padding-top:4px">—</div>
         </div>
       </div>
+      <!-- VEJR -->
+      <div class="card" id="vejr-card" style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <i class="ti ti-cloud" style="color:var(--blue);font-size:18px"></i>
+          <span style="font-size:13px;font-weight:500">Vejr ved Bjørnø</span>
+          <span style="font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;margin-left:auto" id="vejr-opdateret"></span>
+        </div>
+        <div id="vejr-nu" style="display:flex;align-items:center;gap:16px;margin-bottom:14px">
+          <div id="vejr-ikon" style="font-size:44px;line-height:1">⏳</div>
+          <div>
+            <div style="font-size:32px;font-weight:600;line-height:1" id="vejr-temp">—</div>
+            <div style="font-size:13px;color:var(--text2)" id="vejr-beskrivelse">Henter vejr…</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:3px" id="vejr-vind"></div>
+          </div>
+          <div style="margin-left:auto;text-align:right">
+            <div style="font-size:12px;color:var(--text2)">I dag</div>
+            <div style="font-size:13px;font-weight:500" id="vejr-minmax">—</div>
+            <div style="font-size:12px;color:var(--blue)" id="vejr-nedbor"></div>
+          </div>
+        </div>
+        <div id="vejr-timer" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px"></div>
+      </div>
+
       <div id="dag-plan"></div>
     </div>
 
@@ -1190,6 +1213,16 @@ function renderDag() {
   document.getElementById('dag-dato').textContent = dagNavn+' '+fmtDato(now);
   document.getElementById('dag-vanding').textContent = næsteVandingsDag();
 
+  // Tidssensitiv hilsen
+  const time = now.getHours();
+  let hilsen = 'God morgen!';
+  if      (time >= 5  && time < 11) hilsen = 'God morgen!';
+  else if (time >= 11 && time < 13) hilsen = 'God formiddag!';
+  else if (time >= 13 && time < 17) hilsen = 'God eftermiddag!';
+  else if (time >= 17 && time < 22) hilsen = 'God aften!';
+  else                               hilsen = 'God nat!';
+  document.getElementById('dag-hilsen').textContent = hilsen;
+
   const aktiveBlokke = markBlokke.length;
   document.getElementById('dag-blokke').textContent = aktiveBlokke;
   const senesteAfgr = markBlokke.filter(b=>b.historik.length).map(b=>b.historik[0].afgr).slice(0,2).join(', ');
@@ -1200,6 +1233,86 @@ function renderDag() {
   document.getElementById('dag-vol-navne').textContent = iDag.map(v=>v.navn).join(', ') || 'Ingen';
 
   genererUgeplan();
+  hentVejr();
+}
+
+// ── VEJR (Open-Meteo, ingen API-nøgle) ───────────────────────────
+// Koordinater: Bjørnø, Sydfynske Øhav
+const VEJR_LAT = 55.09, VEJR_LON = 10.17;
+
+const VEJR_KODER = {
+  0:'☀️',1:'🌤',2:'⛅',3:'☁️',
+  45:'🌫',48:'🌫',
+  51:'🌦',53:'🌦',55:'🌧',
+  61:'🌧',63:'🌧',65:'🌧',
+  71:'🌨',73:'🌨',75:'❄️',
+  80:'🌦',81:'🌧',82:'⛈',
+  95:'⛈',96:'⛈',99:'⛈'
+};
+const VEJR_TEKST = {
+  0:'Klart',1:'Mest klart',2:'Delvis skyet',3:'Overskyet',
+  45:'Tåge',48:'Tåge',
+  51:'Let støvregn',53:'Støvregn',55:'Kraftig støvregn',
+  61:'Let regn',63:'Regn',65:'Kraftig regn',
+  71:'Let sne',73:'Sne',75:'Kraftig sne',
+  80:'Regnbyger',81:'Kraftige byger',82:'Voldsomme byger',
+  95:'Tordenvejr',96:'Torden m. hagl',99:'Torden m. hagl'
+};
+
+async function hentVejr(){
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${VEJR_LAT}&longitude=${VEJR_LON}`+
+      `&current=temperature_2m,weathercode,windspeed_10m,winddirection_10m`+
+      `&hourly=temperature_2m,weathercode,precipitation_probability`+
+      `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum`+
+      `&timezone=Europe%2FCopenhagen&forecast_days=1`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const d = await res.json();
+    visVejr(d);
+  } catch(e){
+    document.getElementById('vejr-beskrivelse').textContent = 'Vejr ikke tilgængeligt';
+    console.warn('Vejr fejl:', e);
+  }
+}
+
+function vejrVindRetning(grader){
+  const retninger=['N','NØ','Ø','SØ','S','SV','V','NV'];
+  return retninger[Math.round(grader/45)%8];
+}
+
+function visVejr(d){
+  const c = d.current;
+  const daily = d.daily;
+  const hourly = d.hourly;
+
+  // Nuværende
+  document.getElementById('vejr-ikon').textContent = VEJR_KODER[c.weathercode]||'🌡';
+  document.getElementById('vejr-temp').textContent = Math.round(c.temperature_2m)+'°C';
+  document.getElementById('vejr-beskrivelse').textContent = VEJR_TEKST[c.weathercode]||'';
+  document.getElementById('vejr-vind').textContent = `💨 ${Math.round(c.windspeed_10m)} km/t ${vejrVindRetning(c.winddirection_10m)}`;
+  document.getElementById('vejr-minmax').textContent = `↑${Math.round(daily.temperature_2m_max[0])}° ↓${Math.round(daily.temperature_2m_min[0])}°`;
+  const nedbor = daily.precipitation_sum[0];
+  document.getElementById('vejr-nedbor').textContent = nedbor > 0 ? `🌧 ${nedbor.toFixed(1)} mm` : '☀️ Ingen nedbør';
+  const nu = new Date();
+  document.getElementById('vejr-opdateret').textContent = `Opdateret ${nu.getHours()}:${String(nu.getMinutes()).padStart(2,'0')}`;
+
+  // Timeoversigt — næste 8 timer
+  const nowH = new Date().getHours();
+  const tider = hourly.time.map((t,i)=>({
+    time: t, hour: new Date(t).getHours(),
+    temp: hourly.temperature_2m[i],
+    kode: hourly.weathercode[i],
+    nedbor: hourly.precipitation_probability[i]
+  })).filter(x=> new Date(x.time) >= new Date() ).slice(0,8);
+
+  document.getElementById('vejr-timer').innerHTML = tider.map(t=>`
+    <div style="flex:0 0 auto;text-align:center;padding:8px 10px;background:var(--bg);border-radius:var(--radius);min-width:56px">
+      <div style="font-size:10px;color:var(--text2);font-family:'DM Mono',monospace">${t.hour}:00</div>
+      <div style="font-size:20px;margin:3px 0">${VEJR_KODER[t.kode]||'🌡'}</div>
+      <div style="font-size:12px;font-weight:500">${Math.round(t.temp)}°</div>
+      ${t.nedbor>20?`<div style="font-size:10px;color:var(--blue)">${t.nedbor}%</div>`:''}
+    </div>`).join('');
 }
 
 function genererUgeplan() {
