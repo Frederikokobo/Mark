@@ -519,29 +519,128 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--g
       <div class="topbar">
         <div>
           <div class="page-title">Høst</div>
-          <div class="page-sub">Planlæg og registrer høst</div>
-        </div>
-        <button class="btn btn-primary" onclick="toggleForm('host-form')"><i class="ti ti-plus"></i> Tilføj</button>
-      </div>
-      <div class="form-panel" id="host-form">
-        <div class="form-grid fg4">
-          <div class="fl"><label>Blok / Bed</label><input type="text" id="host-bed" placeholder="f.eks. Blok 1"></div>
-          <div class="fl"><label>Afgrøde</label><input type="text" id="host-afgr" placeholder="Gulerod"></div>
-          <div class="fl"><label>Forventet høst</label><input type="date" id="host-dato"></div>
-          <div class="fl"><label>Status</label>
-            <select id="host-status"><option value="vokser">Vokser</option><option value="klar">Klar snart</option><option value="hostet">Høstet</option></select>
-          </div>
+          <div class="page-sub">Registrer høst, opret kunder og send følgesedler</div>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-primary" onclick="addHost()">Gem</button>
-          <button class="btn" onclick="toggleForm('host-form')">Annuller</button>
+          <button class="btn" onclick="showHostTab('hoest')"><i class="ti ti-basket"></i> Høst</button>
+          <button class="btn" onclick="showHostTab('kunder')"><i class="ti ti-users"></i> Kunder</button>
+          <button class="btn btn-green" onclick="showHostTab('foelgeseddel')"><i class="ti ti-file-invoice"></i> Følgeseddel</button>
         </div>
       </div>
-      <div class="card" style="padding:0;overflow:hidden">
-        <table class="tbl">
-          <thead><tr><th>Bed / Blok</th><th>Afgrøde</th><th>Forventet høst</th><th>Status</th><th>Handling</th></tr></thead>
-          <tbody id="host-tbody"></tbody>
-        </table>
+
+      <!-- TAB: HØST -->
+      <div id="host-tab-hoest">
+        <button class="btn btn-primary" onclick="toggleForm('host-form')" style="margin-bottom:14px"><i class="ti ti-plus"></i> Tilføj afgrøde</button>
+        <div class="form-panel" id="host-form">
+          <div class="form-grid fg3">
+            <div class="fl"><label>Blok / Bed</label><input type="text" id="host-bed" placeholder="f.eks. Blok 1"></div>
+            <div class="fl"><label>Afgrøde</label><input type="text" id="host-afgr" placeholder="f.eks. Gulerod"></div>
+            <div class="fl"><label>Forventet høst</label><input type="date" id="host-dato"></div>
+          </div>
+          <div class="form-grid fg3">
+            <div class="fl"><label>Mængde</label><input type="number" id="host-maengde" min="0" step="0.1" placeholder="f.eks. 5"></div>
+            <div class="fl"><label>Enhed</label>
+              <select id="host-enhed">
+                <option value="kg">kg</option>
+                <option value="bundt">bundt</option>
+                <option value="bakke">bakke</option>
+                <option value="kasse">kasse</option>
+                <option value="pose">pose</option>
+                <option value="stk">stk</option>
+              </select>
+            </div>
+            <div class="fl"><label>Status</label>
+              <select id="host-status"><option value="vokser">Vokser</option><option value="klar">Klar snart</option><option value="hostet">Høstet</option></select>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" onclick="addHost()">Gem</button>
+            <button class="btn" onclick="toggleForm('host-form')">Annuller</button>
+          </div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <table class="tbl">
+            <thead><tr><th>Bed / Blok</th><th>Afgrøde</th><th>Mængde</th><th>Forventet høst</th><th>Status</th><th>Handling</th></tr></thead>
+            <tbody id="host-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB: KUNDER -->
+      <div id="host-tab-kunder" style="display:none">
+        <button class="btn btn-primary" onclick="toggleForm('kunde-form')" style="margin-bottom:14px"><i class="ti ti-user-plus"></i> Opret kunde</button>
+        <div class="form-panel" id="kunde-form">
+          <div class="form-grid fg3">
+            <div class="fl"><label>Navn</label><input type="text" id="kunde-navn" placeholder="Navn eller firma"></div>
+            <div class="fl"><label>Adresse</label><input type="text" id="kunde-adresse" placeholder="Vejnavn, by"></div>
+            <div class="fl"><label>Telefon / email</label><input type="text" id="kunde-kontakt" placeholder="f.eks. 12345678"></div>
+          </div>
+          <div class="fl" style="margin-bottom:10px"><label>Note</label><input type="text" id="kunde-note" placeholder="f.eks. restaurant, fast aftager…"></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" onclick="addKunde()">Gem</button>
+            <button class="btn" onclick="toggleForm('kunde-form')">Annuller</button>
+          </div>
+        </div>
+        <div id="kunde-liste"></div>
+      </div>
+
+      <!-- TAB: FØLGESEDDEL -->
+      <div id="host-tab-foelgeseddel" style="display:none">
+        <div class="card" style="margin-bottom:14px">
+          <div style="font-size:14px;font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+            <i class="ti ti-file-invoice" style="color:var(--green)"></i> Ny følgeseddel
+          </div>
+          <div class="form-grid fg3">
+            <div class="fl"><label>Kunde</label>
+              <select id="fs-kunde"><option value="">— Vælg kunde —</option></select>
+            </div>
+            <div class="fl"><label>Dato</label><input type="date" id="fs-dato"></div>
+            <div class="fl"><label>Note til kunde</label><input type="text" id="fs-note" placeholder="f.eks. levering onsdag"></div>
+          </div>
+          <div style="font-size:12px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;font-family:'DM Mono',monospace;margin:12px 0 8px">Linjer</div>
+          <div id="fs-linjer"></div>
+          <button class="btn btn-sm" onclick="addFsLinje()" style="margin-top:8px"><i class="ti ti-plus"></i> Tilføj linje</button>
+          <div style="display:flex;gap:8px;margin-top:14px">
+            <button class="btn btn-primary" onclick="genererFoelgeseddel()"><i class="ti ti-file-invoice"></i> Generer følgeseddel</button>
+            <button class="btn" onclick="nulstilFs()">Ryd</button>
+          </div>
+        </div>
+
+        <!-- Genereret følgeseddel -->
+        <div id="fs-preview" style="display:none">
+          <div class="card" id="fs-print-area" style="max-width:600px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px">
+              <div>
+                <div style="font-family:'DM Serif Display',serif;font-size:22px;letter-spacing:-0.3px">Økobo</div>
+                <div style="font-size:12px;color:var(--text2);margin-top:2px">Bjørnø · Økologisk grøntsagsmark</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:12px;color:var(--text2);font-family:'DM Mono',monospace">FØLGESEDDEL</div>
+                <div style="font-size:14px;font-weight:500" id="fs-nr-visning"></div>
+                <div style="font-size:12px;color:var(--text2)" id="fs-dato-visning"></div>
+              </div>
+            </div>
+            <div style="background:var(--bg);border-radius:var(--radius);padding:12px 14px;margin-bottom:16px">
+              <div style="font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;margin-bottom:4px">LEVERES TIL</div>
+              <div style="font-size:14px;font-weight:500" id="fs-kunde-visning"></div>
+              <div style="font-size:13px;color:var(--text2)" id="fs-adresse-visning"></div>
+            </div>
+            <table class="tbl" style="margin-bottom:16px">
+              <thead><tr><th>Afgrøde</th><th style="text-align:right">Mængde</th><th style="text-align:right">Enhed</th></tr></thead>
+              <tbody id="fs-tbl-body"></tbody>
+            </table>
+            <div id="fs-note-visning" style="font-size:13px;color:var(--text2);border-top:1px solid var(--border);padding-top:12px"></div>
+            <div style="font-size:11px;color:var(--text3);margin-top:12px;font-family:'DM Mono',monospace">Økobo ApS · Bjørnø · fredeand23@gmail.com</div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="btn btn-primary" onclick="printFs()"><i class="ti ti-printer"></i> Print / gem som PDF</button>
+            <button class="btn" onclick="document.getElementById('fs-preview').style.display='none'">Luk</button>
+          </div>
+        </div>
+
+        <!-- Tidligere følgesedler -->
+        <div style="font-size:14px;font-weight:500;margin:20px 0 10px">Tidligere følgesedler</div>
+        <div id="fs-historik"></div>
       </div>
     </div>
 
@@ -679,6 +778,10 @@ let saanOps = [];
 let nextSaaId = 1;
 let hostOps = [];
 let nextHostId = 1;
+let kunder = [];
+let nextKundeId = 1;
+let foelgesedler = [];
+let nextFsId = 1;
 let dagOpgaver = [];
 
 let bedNoter = {};
@@ -741,7 +844,7 @@ function showPage(name, el) {
   if (name==='lugning')     renderLugBlokke();
   if (name==='vanding')     { renderVandSkema(); renderVandBlokke(); }
   if (name==='saaning')     { renderSaaning(); updateVolSelects(); }
-  if (name==='host')        renderHost();
+  if (name==='host')        { renderHost(); showHostTab('hoest'); }
   if (name==='noter')       renderNoter();
   if (name==='frivillige')  renderFrivillige();
   if (name==='drivhus')     { renderDrivhus(); updateDHVolSelect(); }
@@ -1236,14 +1339,28 @@ function deleteSaa(id){saanOps=saanOps.filter(x=>x.id!==id);renderSaaning();save
 // HØST
 // ══════════════════════════════════════════════════════════════════
 
+let _hostTab = 'hoest';
+
+function showHostTab(tab){
+  _hostTab = tab;
+  ['hoest','kunder','foelgeseddel'].forEach(t=>{
+    const el = document.getElementById('host-tab-'+t);
+    if(el) el.style.display = (t===tab)?'block':'none';
+  });
+  if(tab==='kunder') renderKundeliste();
+  if(tab==='foelgeseddel'){ renderFsKundeSelect(); renderFsHistorik(); if(!document.getElementById('fs-linjer').children.length) addFsLinje(); }
+}
+
 function addHost(){
   const bed=document.getElementById('host-bed').value.trim();
   const afgr=document.getElementById('host-afgr').value.trim();
   const dato=document.getElementById('host-dato').value;
+  const maengde=document.getElementById('host-maengde').value;
+  const enhed=document.getElementById('host-enhed').value;
   const status=document.getElementById('host-status').value;
-  if(!bed) return;
-  hostOps.unshift({id:nextHostId++,bed,afgr,dato,status});
-  ['host-bed','host-afgr'].forEach(id=>document.getElementById(id).value='');
+  if(!afgr) return;
+  hostOps.unshift({id:nextHostId++,bed,afgr,dato,maengde:parseFloat(maengde)||0,enhed,status});
+  ['host-bed','host-afgr','host-maengde'].forEach(id=>document.getElementById(id).value='');
   toggleForm('host-form');
   renderHost();
   saveData();
@@ -1251,15 +1368,17 @@ function addHost(){
 
 function renderHost(){
   const tbody=document.getElementById('host-tbody');
+  if(!tbody) return;
   const statusB={vokser:'b-green',klar:'b-amber',hostet:'b-teal'};
   const statusL={vokser:'Vokser',klar:'Klar snart',hostet:'Høstet'};
   if(!hostOps.length){
-    tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text2)">Ingen afgrøder tilføjet endnu</td></tr>';
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text2)">Ingen afgrøder tilføjet endnu</td></tr>';
     return;
   }
   tbody.innerHTML=hostOps.map(o=>`<tr>
-    <td>${o.bed}</td>
+    <td>${o.bed||'—'}</td>
     <td>${o.afgr}</td>
+    <td>${o.maengde?o.maengde+' '+o.enhed:'—'}</td>
     <td>${o.dato||'—'}</td>
     <td><span class="badge ${statusB[o.status]}">${statusL[o.status]}</span></td>
     <td><div style="display:flex;gap:6px">
@@ -1271,6 +1390,198 @@ function renderHost(){
 
 function setHostStatus(id,st){const o=hostOps.find(x=>x.id===id);if(o)o.status=st;renderHost();saveData();}
 function deleteHost(id){hostOps=hostOps.filter(x=>x.id!==id);renderHost();saveData();}
+
+// ── KUNDER ────────────────────────────────────────────────────────
+
+function addKunde(){
+  const navn=document.getElementById('kunde-navn').value.trim();
+  if(!navn) return;
+  const adresse=document.getElementById('kunde-adresse').value.trim();
+  const kontakt=document.getElementById('kunde-kontakt').value.trim();
+  const note=document.getElementById('kunde-note').value.trim();
+  kunder.push({id:nextKundeId++,navn,adresse,kontakt,note});
+  ['kunde-navn','kunde-adresse','kunde-kontakt','kunde-note'].forEach(id=>document.getElementById(id).value='');
+  toggleForm('kunde-form');
+  renderKundeliste();
+  renderFsKundeSelect();
+  saveData();
+}
+
+function renderKundeliste(){
+  const el=document.getElementById('kunde-liste');
+  if(!el) return;
+  if(!kunder.length){
+    el.innerHTML='<div class="card" style="text-align:center;padding:2rem;color:var(--text2)">Ingen kunder oprettet endnu</div>';
+    return;
+  }
+  el.innerHTML=kunder.map(k=>`
+    <div class="card card-sm" style="display:flex;align-items:center;gap:12px">
+      <div style="width:38px;height:38px;border-radius:50%;background:var(--teal-bg,#e6f4f2);color:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;flex-shrink:0">
+        ${k.navn.slice(0,2).toUpperCase()}
+      </div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:500">${k.navn}</div>
+        <div style="font-size:12px;color:var(--text2)">${[k.adresse,k.kontakt,k.note].filter(Boolean).join(' · ')}</div>
+      </div>
+      <button class="btn btn-sm" style="color:var(--red)" onclick="deleteKunde(${k.id})"><i class="ti ti-trash"></i></button>
+    </div>`).join('');
+}
+
+function deleteKunde(id){
+  if(!confirm('Slet kunde?')) return;
+  kunder=kunder.filter(x=>x.id!==id);
+  renderKundeliste();
+  renderFsKundeSelect();
+  saveData();
+}
+
+// ── FØLGESEDDEL ───────────────────────────────────────────────────
+
+let _fsLinjer = [];
+
+function renderFsKundeSelect(){
+  const sel=document.getElementById('fs-kunde');
+  if(!sel) return;
+  const val=sel.value;
+  sel.innerHTML='<option value="">— Vælg kunde —</option>'+
+    kunder.map(k=>`<option value="${k.id}" ${k.id==val?'selected':''}>${k.navn}</option>`).join('');
+}
+
+function addFsLinje(){
+  const idx=_fsLinjer.length;
+  _fsLinjer.push({afgr:'',maengde:'',enhed:'kg'});
+  renderFsLinjer();
+}
+
+function renderFsLinjer(){
+  const container=document.getElementById('fs-linjer');
+  if(!container) return;
+  const enheder=['kg','bundt','bakke','kasse','pose','stk'];
+  container.innerHTML=_fsLinjer.map((l,i)=>`
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+      <input type="text" placeholder="Afgrøde" value="${l.afgr}" oninput="_fsLinjer[${i}].afgr=this.value"
+        style="flex:2;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;background:var(--bg);color:var(--text)">
+      <input type="number" placeholder="Antal" value="${l.maengde}" oninput="_fsLinjer[${i}].maengde=this.value" min="0" step="0.1"
+        style="width:80px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;background:var(--bg);color:var(--text)">
+      <select onchange="_fsLinjer[${i}].enhed=this.value"
+        style="padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;background:var(--bg);color:var(--text)">
+        ${enheder.map(e=>`<option value="${e}" ${e===l.enhed?'selected':''}>${e}</option>`).join('')}
+      </select>
+      <button class="btn btn-sm" style="color:var(--red);flex-shrink:0" onclick="removeFsLinje(${i})"><i class="ti ti-x"></i></button>
+    </div>`).join('');
+}
+
+function removeFsLinje(i){
+  _fsLinjer.splice(i,1);
+  renderFsLinjer();
+}
+
+function nulstilFs(){
+  _fsLinjer=[];
+  document.getElementById('fs-preview').style.display='none';
+  document.getElementById('fs-kunde').value='';
+  document.getElementById('fs-dato').value='';
+  document.getElementById('fs-note').value='';
+  addFsLinje();
+}
+
+function genererFoelgeseddel(){
+  const kundeId=parseInt(document.getElementById('fs-kunde').value);
+  const kunde=kunder.find(k=>k.id===kundeId);
+  if(!kunde){ alert('Vælg en kunde først'); return; }
+  const dato=document.getElementById('fs-dato').value || new Date().toISOString().slice(0,10);
+  const note=document.getElementById('fs-note').value.trim();
+  const linjer=_fsLinjer.filter(l=>l.afgr.trim());
+  if(!linjer.length){ alert('Tilføj mindst én linje med en afgrøde'); return; }
+
+  const nr = 'FS-'+String(nextFsId).padStart(4,'0');
+  const fs = {id:nextFsId++, nr, kundeId, kundNavn:kunde.navn, dato, note, linjer:[...linjer.map(l=>({...l}))]};
+  foelgesedler.unshift(fs);
+  saveData();
+
+  // Vis preview
+  document.getElementById('fs-nr-visning').textContent = nr;
+  document.getElementById('fs-dato-visning').textContent = fmtDato(dato);
+  document.getElementById('fs-kunde-visning').textContent = kunde.navn;
+  document.getElementById('fs-adresse-visning').textContent = [kunde.adresse,kunde.kontakt].filter(Boolean).join(' · ');
+  document.getElementById('fs-note-visning').textContent = note ? 'Note: '+note : '';
+  document.getElementById('fs-tbl-body').innerHTML = linjer.map(l=>`<tr>
+    <td>${l.afgr}</td>
+    <td style="text-align:right">${l.maengde||'—'}</td>
+    <td style="text-align:right">${l.enhed}</td>
+  </tr>`).join('');
+  document.getElementById('fs-preview').style.display='block';
+  document.getElementById('fs-preview').scrollIntoView({behavior:'smooth'});
+  renderFsHistorik();
+}
+
+function renderFsHistorik(){
+  const el=document.getElementById('fs-historik');
+  if(!el) return;
+  if(!foelgesedler.length){
+    el.innerHTML='<div class="card" style="text-align:center;padding:2rem;color:var(--text2)">Ingen følgesedler endnu</div>';
+    return;
+  }
+  el.innerHTML=foelgesedler.map(fs=>`
+    <div class="card card-sm" style="display:flex;align-items:center;gap:12px;cursor:pointer" onclick="visGammelFs(${fs.id})">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;font-family:'DM Mono',monospace;color:var(--green)">${fs.nr}</div>
+        <div style="font-size:13px;font-weight:500">${fs.kundNavn}</div>
+        <div style="font-size:12px;color:var(--text2)">${fmtDato(fs.dato)} · ${fs.linjer.length} linje${fs.linjer.length!==1?'r':''}</div>
+      </div>
+      <button class="btn btn-sm" onclick="event.stopPropagation();printGammelFs(${fs.id})"><i class="ti ti-printer"></i></button>
+      <button class="btn btn-sm" style="color:var(--red)" onclick="event.stopPropagation();deleteFsEntry(${fs.id})"><i class="ti ti-trash"></i></button>
+    </div>`).join('');
+}
+
+function visGammelFs(id){
+  const fs=foelgesedler.find(x=>x.id===id);
+  if(!fs) return;
+  const kunde=kunder.find(k=>k.id===fs.kundeId)||{navn:fs.kundNavn,adresse:'',kontakt:''};
+  document.getElementById('fs-nr-visning').textContent=fs.nr;
+  document.getElementById('fs-dato-visning').textContent=fmtDato(fs.dato);
+  document.getElementById('fs-kunde-visning').textContent=kunde.navn;
+  document.getElementById('fs-adresse-visning').textContent=[kunde.adresse,kunde.kontakt].filter(Boolean).join(' · ');
+  document.getElementById('fs-note-visning').textContent=fs.note?'Note: '+fs.note:'';
+  document.getElementById('fs-tbl-body').innerHTML=fs.linjer.map(l=>`<tr>
+    <td>${l.afgr}</td>
+    <td style="text-align:right">${l.maengde||'—'}</td>
+    <td style="text-align:right">${l.enhed}</td>
+  </tr>`).join('');
+  document.getElementById('fs-preview').style.display='block';
+  document.getElementById('fs-preview').scrollIntoView({behavior:'smooth'});
+}
+
+function printFs(){
+  const area=document.getElementById('fs-print-area');
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&family=DM+Mono&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;font-size:13px;color:#1a1a1a;padding:40px;max-width:600px;margin:0 auto}
+    table{width:100%;border-collapse:collapse}
+    th{font-size:11px;text-transform:uppercase;letter-spacing:0.5px;font-family:'DM Mono',monospace;color:#666;border-bottom:1px solid #e5e7eb;padding:6px 0;text-align:left}
+    td{padding:8px 0;border-bottom:1px solid #f3f4f6;font-size:13px}
+    td:last-child,th:last-child{text-align:right}
+    td:nth-child(2),th:nth-child(2){text-align:right}
+    .header{display:flex;justify-content:space-between;margin-bottom:28px}
+    .firma{font-family:'DM Serif Display',serif;font-size:22px}
+    .firma-sub{font-size:11px;color:#666;margin-top:3px}
+    .label{font-size:10px;font-family:'DM Mono',monospace;color:#666;text-transform:uppercase;margin-bottom:3px}
+    .box{background:#f9fafb;border-radius:6px;padding:12px 14px;margin-bottom:18px}
+    .footer{font-size:10px;color:#999;font-family:'DM Mono',monospace;margin-top:20px;padding-top:12px;border-top:1px solid #e5e7eb}
+  </style></head><body>
+  ${area.innerHTML}
+  </body></html>`;
+  const w=window.open('','_blank','width=700,height=900');
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>w.print(),400);
+}
+
+function printGammelFs(id){ visGammelFs(id); setTimeout(printFs,200); }
+function deleteFsEntry(id){ if(!confirm('Slet følgeseddel?')) return; foelgesedler=foelgesedler.filter(x=>x.id!==id); renderFsHistorik(); saveData(); }
 
 // ══════════════════════════════════════════════════════════════════
 // FRIVILLIGE
@@ -1496,6 +1807,8 @@ function saveData(){
       vandSkema,
       saanOps, nextSaaId,
       hostOps, nextHostId,
+      kunder, nextKundeId,
+      foelgesedler, nextFsId,
       drivhusOps, nextDhId,
       DRIVHUS_STATE: DRIVHUS_BEDE.map(b=>({id:b.id,vandPrio:b.vandPrio,lugPrio:b.lugPrio})),
       dagsnoteHistorik,
@@ -1513,6 +1826,8 @@ function loadData(){
     if(d.frivillige)    { frivillige=d.frivillige;        nextVolId=d.nextVolId||frivillige.length+1; }
     if(d.saanOps)       { saanOps=d.saanOps;              nextSaaId=d.nextSaaId||saanOps.length+1; }
     if(d.hostOps)       { hostOps=d.hostOps;              nextHostId=d.nextHostId||hostOps.length+1; }
+    if(d.kunder)        { kunder=d.kunder;                nextKundeId=d.nextKundeId||kunder.length+1; }
+    if(d.foelgesedler)  { foelgesedler=d.foelgesedler;    nextFsId=d.nextFsId||foelgesedler.length+1; }
     if(d.drivhusOps)    { drivhusOps=d.drivhusOps;        nextDhId=d.nextDhId||drivhusOps.length+1; }
     if(d.dagsnoteHistorik) dagsnoteHistorik=d.dagsnoteHistorik;
     if(d.vandSkema)     d.vandSkema.forEach((s,i)=>{ if(vandSkema[i]){ vandSkema[i].aktiv=s.aktiv; vandSkema[i].træk=s.træk; }});
@@ -1541,7 +1856,7 @@ loadData();
 
 // Sæt dagens dato som default
 const today = new Date().toISOString().split('T')[0];
-['saa-dato','host-dato','blok-dato','dh-dato'].forEach(id=>{
+['saa-dato','host-dato','blok-dato','dh-dato','fs-dato'].forEach(id=>{
   const el=document.getElementById(id); if(el) el.value=today;
 });
 
