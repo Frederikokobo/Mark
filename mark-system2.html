@@ -1,0 +1,2119 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Markens system</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+:root {
+  --bg: #F5F2EC;
+  --bg2: #EDE9E0;
+  --bg3: #E2DDD3;
+  --text: #1C1C1A;
+  --text2: #6B6860;
+  --text3: #9B9890;
+  --border: rgba(28,28,26,0.12);
+  --border2: rgba(28,28,26,0.22);
+  --green: #2D5A27;
+  --green-bg: #EAF0E8;
+  --green-mid: #5A8F52;
+  --amber: #7A4F00;
+  --amber-bg: #FDF2DC;
+  --red: #8B2020;
+  --red-bg: #FCEAEA;
+  --blue: #1A4A7A;
+  --blue-bg: #E8F0FA;
+  --purple: #4A2D8A;
+  --purple-bg: #F0ECFC;
+  --teal: #1A5A4A;
+  --teal-bg: #E8F5F0;
+  --radius: 10px;
+  --radius-lg: 14px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+.shell { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  background: var(--text);
+  color: #F5F2EC;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 0;
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 100;
+}
+
+.sidebar-logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 20px;
+  padding: 0 20px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  margin-bottom: 16px;
+  letter-spacing: -0.3px;
+}
+.sidebar-logo span { color: var(--green-mid); }
+
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 20px;
+  font-size: 14px;
+  color: rgba(245,242,236,0.6);
+  cursor: pointer;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+  user-select: none;
+}
+.nav-item:hover { color: #F5F2EC; background: rgba(255,255,255,0.05); }
+.nav-item.active { color: #F5F2EC; border-left-color: var(--green-mid); background: rgba(255,255,255,0.08); }
+.nav-item i { font-size: 16px; flex-shrink: 0; }
+
+.nav-section {
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(245,242,236,0.3);
+  padding: 16px 20px 6px;
+  font-family: 'DM Mono', monospace;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+  padding: 16px 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 12px;
+  color: rgba(245,242,236,0.35);
+}
+
+.main {
+  margin-left: 220px;
+  flex: 1;
+  padding: 32px;
+  max-width: 960px;
+}
+
+.topbar {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 28px;
+}
+.page-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px;
+  letter-spacing: -0.5px;
+  color: var(--text);
+}
+.page-sub { font-size: 13px; color: var(--text2); margin-top: 3px; }
+
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
+.stat {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+}
+.stat-label { font-size: 12px; color: var(--text2); margin-bottom: 6px; font-family: 'DM Mono', monospace; letter-spacing: 0.3px; }
+.stat-value { font-size: 26px; font-weight: 500; color: var(--text); font-family: 'DM Serif Display', serif; }
+.stat-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 12px;
+}
+.card-sm { padding: 14px 18px; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 500;
+  padding: 3px 9px; border-radius: 20px;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.2px; white-space: nowrap;
+}
+.b-green { background: var(--green-bg); color: var(--green); }
+.b-amber { background: var(--amber-bg); color: var(--amber); }
+.b-red { background: var(--red-bg); color: var(--red); }
+.b-blue { background: var(--blue-bg); color: var(--blue); }
+.b-purple { background: var(--purple-bg); color: var(--purple); }
+.b-teal { background: var(--teal-bg); color: var(--teal); }
+.b-gray { background: var(--bg2); color: var(--text2); }
+
+.btn {
+  font-size: 13px; font-weight: 500;
+  padding: 8px 16px; border-radius: var(--radius);
+  border: 1px solid var(--border2);
+  background: none; cursor: pointer;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.12s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn:hover { background: var(--bg2); }
+.btn-primary { background: var(--text); color: var(--bg); border-color: var(--text); }
+.btn-primary:hover { opacity: 0.85; background: var(--text); }
+.btn-green { background: var(--green); color: #fff; border-color: var(--green); }
+.btn-green:hover { opacity: 0.85; background: var(--green); }
+.btn-sm { font-size: 12px; padding: 5px 10px; }
+.btn-danger { color: var(--red); border-color: var(--red); }
+.btn-danger:hover { background: var(--red-bg); }
+
+.form-grid { display: grid; gap: 10px; margin-bottom: 12px; }
+.fg2 { grid-template-columns: 1fr 1fr; }
+.fg3 { grid-template-columns: 1fr 1fr 1fr; }
+.fg4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.fl { display: flex; flex-direction: column; gap: 4px; }
+.fl label { font-size: 11px; color: var(--text2); font-family: 'DM Mono', monospace; letter-spacing: 0.3px; text-transform: uppercase; }
+.fl input, .fl select, .fl textarea {
+  font-size: 14px; font-family: 'DM Sans', sans-serif;
+  border: 1px solid var(--border2); border-radius: var(--radius);
+  background: var(--bg); padding: 8px 12px;
+  color: var(--text); width: 100%;
+}
+.fl textarea { resize: vertical; min-height: 70px; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--green-mid); }
+
+.sec { display: none; }
+.sec.active { display: block; }
+
+.form-panel {
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 18px 20px;
+  margin-bottom: 14px; display: none;
+}
+.form-panel.open { display: block; }
+
+.task-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 20px; border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background 0.1s;
+}
+.task-row:last-child { border-bottom: none; }
+.task-row:hover { background: var(--bg); }
+.task-row.done { opacity: 0.45; }
+.task-check {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid var(--border2); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s; background: none; cursor: pointer;
+}
+.task-check.checked { background: var(--green); border-color: var(--green); }
+.task-check.checked::after { content: '✓'; color: #fff; font-size: 11px; }
+.task-type-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+}
+
+.day-block {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius-lg); margin-bottom: 14px; overflow: hidden;
+}
+.day-header {
+  padding: 14px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg);
+}
+.day-title { font-family: 'DM Serif Display', serif; font-size: 17px; }
+.day-body { padding: 0; }
+
+.tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+.tbl th { text-align: left; font-size: 11px; font-family: 'DM Mono', monospace; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text2); padding: 8px 12px; border-bottom: 1px solid var(--border); font-weight: 500; }
+.tbl td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: var(--bg); }
+
+.toggle {
+  width: 38px; height: 22px; border-radius: 11px;
+  border: none; cursor: pointer; position: relative;
+  flex-shrink: 0; transition: background 0.2s;
+}
+.toggle.on { background: var(--green); }
+.toggle.off { background: var(--bg3); }
+.toggle::after {
+  content: ''; position: absolute;
+  width: 16px; height: 16px; background: #fff;
+  border-radius: 50%; top: 3px; transition: left 0.2s;
+}
+.toggle.on::after { left: 19px; }
+.toggle.off::after { left: 3px; }
+
+.divider-label {
+  display: flex; align-items: center; gap: 10px;
+  color: var(--text2); font-size: 12px;
+  font-family: 'DM Mono', monospace; letter-spacing: 0.5px;
+  text-transform: uppercase; margin: 16px 0 10px;
+}
+.divider-label::before, .divider-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* MARKBLOKKE */
+.blok-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.blok-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: background 0.1s;
+  border-bottom: 1px solid transparent;
+}
+.blok-header:hover { background: var(--bg); }
+.blok-header.open { border-bottom-color: var(--border); }
+.blok-color-bar {
+  width: 4px; height: 36px; border-radius: 2px; flex-shrink: 0;
+}
+.blok-name {
+  font-size: 16px; font-weight: 500; flex: 1;
+}
+.blok-meta {
+  font-size: 12px; color: var(--text2); margin-top: 2px;
+}
+.blok-body { padding: 16px 20px; display: none; }
+.blok-body.open { display: block; }
+
+.historik-row {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+}
+.historik-row:last-child { border-bottom: none; }
+.historik-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--green-mid); flex-shrink: 0; margin-top: 5px;
+}
+
+.vol-view { max-width: 480px; margin: 0 auto; }
+.vol-header {
+  background: var(--text); color: var(--bg);
+  padding: 20px 24px; border-radius: var(--radius-lg);
+  margin-bottom: 20px;
+}
+.vol-header h2 { font-family: 'DM Serif Display', serif; font-size: 22px; }
+.vol-header p { font-size: 13px; opacity: 0.6; margin-top: 4px; }
+.vol-task {
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 18px 20px;
+  margin-bottom: 10px; display: flex; gap: 14px; align-items: flex-start;
+}
+.vol-task-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px; }
+  .stats { grid-template-columns: repeat(2,1fr); }
+  .fg3 { grid-template-columns: 1fr 1fr; }
+  .fg4 { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell" id="admin-shell">
+  <nav class="sidebar">
+    <div class="sidebar-logo">Mark<span>en</span></div>
+    <div class="nav-section">Dag</div>
+    <div class="nav-item active" onclick="showPage('dag', this)"><i class="ti ti-sun"></i> Dagsoverblik</div>
+    <div class="nav-section">Mark</div>
+    <div class="nav-item" onclick="showPage('markblokke', this)"><i class="ti ti-layout-grid-add"></i> Markblokke</div>
+    <div class="nav-item" onclick="showPage('lugning', this)"><i class="ti ti-cut"></i> Lugning</div>
+    <div class="nav-item" onclick="showPage('vanding', this)"><i class="ti ti-droplet"></i> Vanding</div>
+    <div class="nav-section">Opgaver</div>
+    <div class="nav-item" onclick="showPage('saaning', this)"><i class="ti ti-seeding"></i> Såning & udplantning</div>
+    <div class="nav-item" onclick="showPage('host', this)"><i class="ti ti-basket"></i> Høst</div>
+    <div class="nav-section">Administration</div>
+    <div class="nav-item" onclick="showPage('noter', this)"><i class="ti ti-notes"></i> Marknotes</div>
+    <div class="nav-item" onclick="showPage('frivillige', this)"><i class="ti ti-users"></i> Frivillige</div>
+    <div class="nav-item" onclick="showPage('drivhus', this)"><i class="ti ti-home-2"></i> Drivhus</div>
+    <div class="sidebar-bottom">
+      <div style="margin-bottom:8px">Frivillig-visning:</div>
+      <button class="btn" style="width:100%;justify-content:center;font-size:12px;color:#F5F2EC;border-color:rgba(255,255,255,0.2)" onclick="showVolView()"><i class="ti ti-eye"></i> Åbn frivillig-visning</button>
+    </div>
+  </nav>
+
+  <main class="main">
+
+    <!-- DAG -->
+    <div class="sec active" id="page-dag">
+      <div class="topbar">
+        <div>
+          <div class="page-title"><span id="dag-hilsen">God morgen!</span> <span id="dag-dato"></span></div>
+          <div class="page-sub">Morgenbriefing 08:15 · Frivillige slutter 12:00</div>
+        </div>
+        <button class="btn btn-green" onclick="genererUgeplan()"><i class="ti ti-refresh"></i> Opdater</button>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Frivillige i dag</div>
+          <div class="stat-value" id="dag-vol-antal">0</div>
+          <div class="stat-sub" id="dag-vol-navne">Ingen</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Opgaver i dag</div>
+          <div class="stat-value" id="dag-opgaver">0</div>
+          <div class="stat-sub">planlagt</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Markblokke</div>
+          <div class="stat-value" id="dag-blokke">0</div>
+          <div class="stat-sub" id="dag-blokke-sub">aktive blokke</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Næste vanding</div>
+          <div class="stat-value" id="dag-vanding" style="font-size:16px;padding-top:4px">—</div>
+        </div>
+      </div>
+      <!-- VEJR -->
+      <div class="card" id="vejr-card" style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <i class="ti ti-cloud" style="color:var(--blue);font-size:18px"></i>
+          <span style="font-size:13px;font-weight:500">Vejr ved Bjørnø</span>
+          <span style="font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;margin-left:auto" id="vejr-opdateret"></span>
+        </div>
+        <div id="vejr-nu" style="display:flex;align-items:center;gap:16px;margin-bottom:14px">
+          <div id="vejr-ikon" style="font-size:44px;line-height:1">⏳</div>
+          <div>
+            <div style="font-size:32px;font-weight:600;line-height:1" id="vejr-temp">—</div>
+            <div style="font-size:13px;color:var(--text2)" id="vejr-beskrivelse">Henter vejr…</div>
+            <div style="font-size:12px;color:var(--text2);margin-top:3px" id="vejr-vind"></div>
+          </div>
+          <div style="margin-left:auto;text-align:right">
+            <div style="font-size:12px;color:var(--text2)">I dag</div>
+            <div style="font-size:13px;font-weight:500" id="vejr-minmax">—</div>
+            <div style="font-size:12px;color:var(--blue)" id="vejr-nedbor"></div>
+          </div>
+        </div>
+        <div id="vejr-timer" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:4px"></div>
+      </div>
+
+      <div id="dag-plan"></div>
+    </div>
+
+    <!-- MARKBLOKKE -->
+    <div class="sec" id="page-markblokke">
+      <div class="topbar">
+        <div>
+          <div class="page-title">Markblokke</div>
+          <div class="page-sub">Opret blokke, registrer såning & udplantning med fuld historik</div>
+        </div>
+        <button class="btn btn-primary" onclick="toggleForm('blok-opret-form')"><i class="ti ti-plus"></i> Opret ny blok</button>
+      </div>
+
+      <!-- Opret blok form -->
+      <div class="form-panel" id="blok-opret-form">
+        <div style="font-size:14px;font-weight:500;margin-bottom:12px">Ny markblok</div>
+        <div class="form-grid fg3">
+          <div class="fl"><label>Blokkenavn / nummer</label><input type="text" id="blok-navn" placeholder="f.eks. Blok 1, Sydmarken…"></div>
+          <div class="fl"><label>Antal bede</label><input type="number" id="blok-bede" min="1" max="200" placeholder="f.eks. 6"></div>
+          <div class="fl"><label>Farve</label>
+            <select id="blok-farve">
+              <option value="#5A8F52">Grøn</option>
+              <option value="#378ADD">Blå</option>
+              <option value="#BA7517">Amber</option>
+              <option value="#7F77DD">Lilla</option>
+              <option value="#C04080">Pink</option>
+              <option value="#3A8A6A">Teal</option>
+              <option value="#E24B4A">Rød</option>
+            </select>
+          </div>
+        </div>
+        <div style="font-size:12px;font-weight:500;color:var(--text2);margin-bottom:8px;margin-top:4px;text-transform:uppercase;letter-spacing:0.5px;font-family:'DM Mono',monospace">Første såning / udplantning (valgfrit)</div>
+        <div class="form-grid fg3">
+          <div class="fl"><label>Afgrøde</label><input type="text" id="blok-afgr" placeholder="f.eks. Gulerod, Spinat…"></div>
+          <div class="fl"><label>Dato</label><input type="date" id="blok-dato"></div>
+          <div class="fl"><label>Type</label>
+            <select id="blok-type">
+              <option value="udplantning">Udplantning</option>
+              <option value="saaning">Såning</option>
+            </select>
+          </div>
+        </div>
+        <div class="fl" style="margin-bottom:12px"><label>Note</label><textarea id="blok-note" placeholder="f.eks. rækkerne fordelt med 30cm, sprøjtet mod snegle…" style="min-height:56px"></textarea></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="opretBlok()"><i class="ti ti-check"></i> Opret blok</button>
+          <button class="btn" onclick="toggleForm('blok-opret-form')">Annuller</button>
+        </div>
+      </div>
+
+      <!-- Blok liste -->
+      <div id="blok-liste"></div>
+    </div>
+
+    <!-- LUGNING -->
+    <div class="sec" id="page-lugning">
+      <div class="topbar">
+        <div>
+          <div class="page-title">Lugning</div>
+          <div class="page-sub">Registrer lugningsbehov per blok</div>
+        </div>
+        <button class="btn btn-primary" onclick="genererLugplan()"><i class="ti ti-refresh"></i> Generer ugeplan</button>
+      </div>
+      <div class="card" style="margin-bottom:16px;padding:14px 18px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <i class="ti ti-walk" style="font-size:20px;color:var(--green)"></i>
+          <div>
+            <div style="font-weight:500;font-size:14px">Markvandring</div>
+            <div style="font-size:12px;color:var(--text2)">Sæt prioritet på de blokke der trænger til lugning</div>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:12px;font-size:12px;color:var(--text2)">
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#E24B4A;margin-right:4px"></span>Trænger meget</span>
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#BA7517;margin-right:4px"></span>Trænger lidt</span>
+            <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#B4B2A9;margin-right:4px"></span>OK</span>
+          </div>
+        </div>
+      </div>
+      <div id="lug-blok-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px"></div>
+      <div id="lug-plan" style="margin-top:24px"></div>
+    </div>
+
+    <!-- VANDING -->
+    <div class="sec" id="page-vanding">
+      <div class="topbar">
+        <div>
+          <div class="page-title">Vanding</div>
+          <div class="page-sub">Vandingsskema og prioritering per blok</div>
+        </div>
+        <button class="btn btn-primary" onclick="genererVandplan()"><i class="ti ti-refresh"></i> Generer plan</button>
+      </div>
+      <div class="card" style="margin-bottom:20px">
+        <div style="font-size:13px;font-weight:500;margin-bottom:12px;display:flex;align-items:center;gap:8px"><i class="ti ti-calendar" style="font-size:16px"></i> Vandingsskema</div>
+        <div id="vand-skema" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+      </div>
+      <div style="font-size:14px;font-weight:500;margin-bottom:10px">Prioritering per blok</div>
+      <div id="vand-blok-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-bottom:20px"></div>
+      <div id="vand-plan"></div>
+    </div>
+
+    <!-- SÅNING -->
+    <div class="sec" id="page-saaning">
+      <div class="topbar">
+        <div>
+          <div class="page-title">Såning & udplantning</div>
+          <div class="page-sub">Planlæg hvornår der skal sås eller udplantes</div>
+        </div>
+        <button class="btn btn-primary" onclick="toggleForm('saa-form')"><i class="ti ti-plus"></i> Ny opgave</button>
+      </div>
+      <div class="form-panel" id="saa-form">
+        <div class="form-grid fg3">
+          <div class="fl"><label>Type</label>
+            <select id="saa-type"><option value="saaning">Såning</option><option value="udplantning">Udplantning</option></select>
+          </div>
+          <div class="fl"><label>Blok / Bed</label><input type="text" id="saa-bed" placeholder="f.eks. Blok 1, Sydmarken…"></div>
+          <div class="fl"><label>Dato</label><input type="date" id="saa-dato"></div>
+        </div>
+        <div class="form-grid fg2">
+          <div class="fl"><label>Afgrøde</label><input type="text" id="saa-afgr" placeholder="f.eks. Gulerod, Spinat…"></div>
+          <div class="fl"><label>Frivillig</label><select id="saa-vol"><option value="">— Ikke tildelt —</option></select></div>
+        </div>
+        <div class="fl" style="margin-bottom:10px"><label>Note</label><textarea id="saa-note"></textarea></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="addSaaning()">Gem</button>
+          <button class="btn" onclick="toggleForm('saa-form')">Annuller</button>
+        </div>
+      </div>
+      <div id="saa-liste"></div>
+    </div>
+
+    <!-- HØST -->
+    <div class="sec" id="page-host">
+      <div class="topbar">
+        <div>
+          <div class="page-title">Høst & levering</div>
+          <div class="page-sub">Bestillinger, høstliste og følgesedler</div>
+        </div>
+      </div>
+
+      <!-- TAB-KNAPPER -->
+      <div style="display:flex;gap:6px;margin-bottom:16px;border-bottom:1px solid var(--border);padding-bottom:12px">
+        <button class="btn" id="htab-btn-kunder"      onclick="showHostTab('kunder')"      style="gap:6px"><i class="ti ti-users"></i> Kunder</button>
+        <button class="btn" id="htab-btn-bestillinger" onclick="showHostTab('bestillinger')" style="gap:6px"><i class="ti ti-clipboard-list"></i> Bestillinger</button>
+        <button class="btn" id="htab-btn-levering"    onclick="showHostTab('levering')"    style="gap:6px"><i class="ti ti-truck-delivery"></i> Levering</button>
+      </div>
+
+      <!-- TAB: KUNDER -->
+      <div id="host-tab-kunder" style="display:none">
+        <button class="btn btn-primary" onclick="toggleForm('kunde-form')" style="margin-bottom:14px"><i class="ti ti-user-plus"></i> Opret kunde</button>
+        <div class="form-panel" id="kunde-form">
+          <div class="form-grid fg3">
+            <div class="fl"><label>Navn</label><input type="text" id="kunde-navn" placeholder="Navn eller firma"></div>
+            <div class="fl"><label>Adresse</label><input type="text" id="kunde-adresse" placeholder="Vejnavn, by"></div>
+            <div class="fl"><label>Telefon / email</label><input type="text" id="kunde-kontakt" placeholder="f.eks. 12345678"></div>
+          </div>
+          <div class="fl" style="margin-bottom:10px"><label>Note</label><input type="text" id="kunde-note" placeholder="f.eks. restaurant, fast aftager…"></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" onclick="addKunde()">Gem</button>
+            <button class="btn" onclick="toggleForm('kunde-form')">Annuller</button>
+          </div>
+        </div>
+        <div id="kunde-liste"></div>
+      </div>
+
+      <!-- TAB: BESTILLINGER -->
+      <div id="host-tab-bestillinger" style="display:none">
+        <button class="btn btn-primary" onclick="toggleForm('best-form')" style="margin-bottom:14px"><i class="ti ti-plus"></i> Ny bestilling</button>
+        <div class="form-panel" id="best-form">
+          <div style="font-size:13px;font-weight:500;margin-bottom:10px">Ny bestilling</div>
+          <div class="form-grid fg3">
+            <div class="fl"><label>Kunde</label>
+              <select id="best-kunde"><option value="">— Vælg kunde —</option></select>
+            </div>
+            <div class="fl"><label>Leveringsdato</label><input type="date" id="best-dato"></div>
+            <div class="fl"><label>Note</label><input type="text" id="best-note" placeholder="f.eks. leveres onsdag morgen"></div>
+          </div>
+          <div style="font-size:12px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;font-family:'DM Mono',monospace;margin:10px 0 6px">Bestilte varer</div>
+          <div id="best-linjer"></div>
+          <button class="btn btn-sm" onclick="addBestLinje()" style="margin-top:6px"><i class="ti ti-plus"></i> Tilføj linje</button>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="btn btn-primary" onclick="gemBestilling()">Gem bestilling</button>
+            <button class="btn" onclick="toggleForm('best-form')">Annuller</button>
+          </div>
+        </div>
+        <div id="bestillinger-liste"></div>
+      </div>
+
+      <!-- TAB: LEVERING -->
+      <div id="host-tab-levering" style="display:none">
+
+        <!-- Høstliste -->
+        <div class="card" style="margin-bottom:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div style="font-size:14px;font-weight:500;display:flex;align-items:center;gap:8px">
+              <i class="ti ti-basket" style="color:var(--green)"></i> Samlet høstliste
+            </div>
+            <button class="btn btn-sm" onclick="printHoestliste()"><i class="ti ti-printer"></i> Print høstliste</button>
+          </div>
+          <div id="hoest-liste-indhold"></div>
+        </div>
+
+        <!-- Pak & følgeseddel per bestilling -->
+        <div style="font-size:14px;font-weight:500;margin-bottom:10px">Pak og generer følgeseddel</div>
+        <div id="pak-bestillinger"></div>
+
+        <!-- Følgeseddel preview -->
+        <div id="fs-preview" style="display:none;margin-top:16px">
+          <div id="fs-print-area" class="card" style="max-width:620px;background:#fff;color:#1a1a1a">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px">
+              <div>
+                <div style="font-family:'DM Serif Display',serif;font-size:24px;letter-spacing:-0.3px">Økobo</div>
+                <div style="font-size:12px;color:#666;margin-top:2px">Bjørnø · Økologisk grøntsagsmark</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font-size:11px;color:#888;font-family:'DM Mono',monospace;letter-spacing:1px">FØLGESEDDEL</div>
+                <div style="font-size:15px;font-weight:600;margin-top:2px" id="fs-nr-visning"></div>
+                <div style="font-size:12px;color:#666" id="fs-dato-visning"></div>
+              </div>
+            </div>
+            <div style="background:#f9f9f7;border-radius:8px;padding:12px 16px;margin-bottom:20px">
+              <div style="font-size:10px;color:#888;font-family:'DM Mono',monospace;letter-spacing:1px;margin-bottom:4px">LEVERES TIL</div>
+              <div style="font-size:15px;font-weight:600" id="fs-kunde-visning"></div>
+              <div style="font-size:13px;color:#666;margin-top:2px" id="fs-adresse-visning"></div>
+            </div>
+            <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
+              <thead>
+                <tr style="border-bottom:2px solid #e5e7eb">
+                  <th style="text-align:left;padding:6px 0;font-size:11px;font-family:'DM Mono',monospace;color:#888;letter-spacing:0.5px;text-transform:uppercase">Afgrøde</th>
+                  <th style="text-align:right;padding:6px 0;font-size:11px;font-family:'DM Mono',monospace;color:#888;letter-spacing:0.5px;text-transform:uppercase">Bestilt</th>
+                  <th style="text-align:right;padding:6px 0;font-size:11px;font-family:'DM Mono',monospace;color:#888;letter-spacing:0.5px;text-transform:uppercase">Pakket</th>
+                </tr>
+              </thead>
+              <tbody id="fs-tbl-body"></tbody>
+            </table>
+            <div id="fs-note-visning" style="font-size:13px;color:#666;border-top:1px solid #e5e7eb;padding-top:12px;margin-bottom:12px"></div>
+            <div style="font-size:10px;color:#aaa;font-family:'DM Mono',monospace">Økobo ApS · Bjørnø · fredeand23@gmail.com</div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button class="btn btn-primary" onclick="printFs()"><i class="ti ti-printer"></i> Print / gem som PDF</button>
+            <button class="btn" onclick="document.getElementById('fs-preview').style.display='none'">Luk</button>
+          </div>
+        </div>
+
+        <!-- Afsluttede leveringer -->
+        <div style="font-size:14px;font-weight:500;margin:20px 0 10px">Afsluttede leveringer</div>
+        <div id="fs-historik"></div>
+      </div>
+    </div>
+
+    <!-- NOTER -->
+    <div class="sec" id="page-noter">
+      <div class="topbar">
+        <div>
+          <div class="page-title">Marknotes</div>
+          <div class="page-sub">Hurtige noter fra marken – gemt med dato og tid</div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:20px">
+        <div style="font-size:13px;font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:6px">
+          <i class="ti ti-writing" style="font-size:15px;color:var(--green)"></i>
+          Dagsnote
+          <span style="font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;margin-left:auto" id="noter-dato-txt"></span>
+        </div>
+        <textarea id="dagsnote-input" placeholder="Skriv en hurtig note fra markvandringen – vejr, generelle observationer, aftaler…" style="width:100%;min-height:80px;font-size:14px;font-family:'DM Sans',sans-serif;border:1px solid var(--border2);border-radius:var(--radius);background:var(--bg);padding:10px 12px;resize:vertical;color:var(--text)"></textarea>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px">
+          <button class="btn btn-primary" onclick="gemDagsnote()"><i class="ti ti-check"></i> Gem note</button>
+        </div>
+      </div>
+      <div style="font-size:14px;font-weight:500;margin-bottom:10px">Dagsnote historik</div>
+      <div id="dagsnote-historik"></div>
+    </div>
+
+    <!-- FRIVILLIGE -->
+    <div class="sec" id="page-frivillige">
+      <div class="topbar">
+        <div>
+          <div class="page-title">Frivillige</div>
+          <div class="page-sub">Administrer frivillige og tildel opgaver</div>
+        </div>
+        <button class="btn btn-primary" onclick="toggleForm('vol-form')"><i class="ti ti-user-plus"></i> Tilføj</button>
+      </div>
+      <div class="form-panel" id="vol-form">
+        <div class="form-grid fg3">
+          <div class="fl"><label>Navn</label><input type="text" id="vol-navn" placeholder="Fornavn"></div>
+          <div class="fl"><label>Dage</label><input type="text" id="vol-dage" placeholder="f.eks. Mandag, Fredag"></div>
+          <div class="fl"><label>Note</label><input type="text" id="vol-note" placeholder="f.eks. starter næste mandag"></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="addVol()">Gem</button>
+          <button class="btn" onclick="toggleForm('vol-form')">Annuller</button>
+        </div>
+      </div>
+      <div id="vol-liste-admin"></div>
+    </div>
+
+    <!-- DRIVHUS -->
+    <div class="sec" id="page-drivhus">
+      <div class="topbar">
+        <div>
+          <div class="page-title">Drivhus</div>
+          <div class="page-sub">5 bede · P1–P5</div>
+        </div>
+        <button class="btn btn-primary" onclick="toggleForm('drivhus-form')"><i class="ti ti-plus"></i> Ny opgave</button>
+      </div>
+      <div class="form-panel" id="drivhus-form">
+        <div class="form-grid fg3">
+          <div class="fl"><label>Type</label>
+            <select id="dh-type">
+              <option value="vanding">Vanding</option>
+              <option value="lugning">Lugning</option>
+              <option value="host">Høst</option>
+              <option value="saaning">Såning / udplantning</option>
+            </select>
+          </div>
+          <div class="fl"><label>Bed</label>
+            <select id="dh-bed">
+              <option>P1 – Tomater</option>
+              <option>P2 – Tomater</option>
+              <option>P3 – Salat</option>
+              <option>P4 – Radisser</option>
+              <option>P5 – Forårsløg</option>
+            </select>
+          </div>
+          <div class="fl"><label>Dato</label><input type="date" id="dh-dato"></div>
+        </div>
+        <div class="form-grid fg2">
+          <div class="fl"><label>Frivillig</label><select id="dh-vol"><option value="">— Ikke tildelt —</option></select></div>
+          <div class="fl"><label>Note</label><input type="text" id="dh-note" placeholder="f.eks. vand ved fod…"></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" onclick="addDrivhusOpgave()">Gem</button>
+          <button class="btn" onclick="toggleForm('drivhus-form')">Annuller</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:24px" id="dh-bed-grid"></div>
+      <div style="font-size:14px;font-weight:500;margin-bottom:10px">Opgaver</div>
+      <div id="dh-opgave-liste"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- FRIVILLIG VISNING -->
+<div id="vol-shell" style="display:none;background:var(--bg);min-height:100vh;padding:24px 16px">
+  <div class="vol-view">
+    <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+      <button class="btn" onclick="hideVolView()"><i class="ti ti-x"></i> Luk</button>
+    </div>
+    <div class="vol-header">
+      <h2>Opgaver i dag</h2>
+      <p id="vol-dato-txt"></p>
+    </div>
+    <div id="vol-opgaver-visning"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════════════
+
+// Markblokke: [{ id, navn, antalBede, farve, lugPrio, vandPrio, historik: [{id,afgr,dato,type,note,oprettet}] }]
+let markBlokke = [];
+let nextBlokId = 1;
+let nextHistorikId = 1;
+
+let frivillige = [];
+let nextVolId = 1;
+
+const vandSkema = [
+  {dag:'Mandag',   aktiv:true,  træk:8},
+  {dag:'Tirsdag',  aktiv:false, træk:6},
+  {dag:'Onsdag',   aktiv:false, træk:6},
+  {dag:'Torsdag',  aktiv:false, træk:6},
+  {dag:'Fredag',   aktiv:true,  træk:8},
+  {dag:'Lørdag',   aktiv:false, træk:4},
+  {dag:'Søndag',   aktiv:false, træk:4},
+];
+
+let saanOps = [];
+let nextSaaId = 1;
+let hostOps = [];
+let nextHostId = 1;
+let kunder = [];
+let nextKundeId = 1;
+let foelgesedler = [];
+let nextFsId = 1;
+let dagOpgaver = [];
+
+let bedNoter = {};
+let dagsnoteHistorik = [];
+
+const DRIVHUS_BEDE = [
+  { id:'P1', afgr:'Tomater',    vandPrio:1, lugPrio:1 },
+  { id:'P2', afgr:'Tomater',    vandPrio:1, lugPrio:1 },
+  { id:'P3', afgr:'Salat',      vandPrio:1, lugPrio:1 },
+  { id:'P4', afgr:'Radisser',   vandPrio:1, lugPrio:1 },
+  { id:'P5', afgr:'Forårsløg',  vandPrio:1, lugPrio:1 },
+];
+let drivhusOps = [];
+let nextDhId = 1;
+
+// ══════════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════════
+
+const dagNavneDK = ['Søndag','Mandag','Tirsdag','Onsdag','Torsdag','Fredag','Lørdag'];
+const måneder = ['jan','feb','mar','apr','maj','jun','jul','aug','sep','okt','nov','dec'];
+
+function fmtDato(d) {
+  if (!d) return '—';
+  const dt = typeof d === 'string' ? new Date(d) : d;
+  return dt.getDate()+'. '+måneder[dt.getMonth()]+' '+dt.getFullYear();
+}
+function fmtDatoTid(d) {
+  if (!d) return '';
+  const dt = typeof d === 'string' ? new Date(d) : d;
+  return dt.getDate()+'. '+måneder[dt.getMonth()]+' '+dt.toLocaleTimeString('da-DK',{hour:'2-digit',minute:'2-digit'});
+}
+function næsteVandingsDag() {
+  const map = {Mandag:1,Tirsdag:2,Onsdag:3,Torsdag:4,Fredag:5,Lørdag:6,Søndag:0};
+  const today = new Date().getDay();
+  let best = null, bestDiff = 99;
+  vandSkema.filter(s=>s.aktiv).forEach(s=>{
+    let diff = (map[s.dag] - today + 7) % 7;
+    if (diff < bestDiff) { bestDiff = diff; best = diff===0 ? s.dag+' (i dag)' : s.dag; }
+  });
+  return best || '—';
+}
+function prioColor(p) { return p===3?'#E24B4A':p===2?'#BA7517':'#B4B2A9'; }
+function prioBadge(p) { return p===3?'b-red':p===2?'b-amber':'b-gray'; }
+function prioLabel(p) { return p===3?'Høj':p===2?'Mellem':'Lav'; }
+
+// ══════════════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════════════
+
+function showPage(name, el) {
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const page = document.getElementById('page-'+name);
+  if (page) page.classList.add('active');
+  if (el) el.classList.add('active');
+
+  if (name==='dag')         renderDag();
+  if (name==='markblokke')  renderBlokke();
+  if (name==='lugning')     renderLugBlokke();
+  if (name==='vanding')     { renderVandSkema(); renderVandBlokke(); }
+  if (name==='saaning')     { renderSaaning(); updateVolSelects(); }
+  if (name==='host')        { showHostTab('bestillinger'); }
+  if (name==='noter')       renderNoter();
+  if (name==='frivillige')  renderFrivillige();
+  if (name==='drivhus')     { renderDrivhus(); updateDHVolSelect(); }
+}
+
+function toggleForm(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// MARKBLOKKE
+// ══════════════════════════════════════════════════════════════════
+
+function opretBlok() {
+  const navn = document.getElementById('blok-navn').value.trim();
+  if (!navn) { alert('Skriv et navn til blokken'); return; }
+  const antalBede = parseInt(document.getElementById('blok-bede').value) || 0;
+  const farve = document.getElementById('blok-farve').value;
+  const afgr = document.getElementById('blok-afgr').value.trim();
+  const dato = document.getElementById('blok-dato').value;
+  const type = document.getElementById('blok-type').value;
+  const note = document.getElementById('blok-note').value.trim();
+
+  const blok = {
+    id: nextBlokId++,
+    navn, antalBede, farve,
+    lugPrio: 1, vandPrio: 1,
+    historik: []
+  };
+
+  if (afgr || dato) {
+    blok.historik.push({
+      id: nextHistorikId++,
+      afgr, dato, type, note,
+      oprettet: new Date().toISOString()
+    });
+  }
+
+  markBlokke.unshift(blok);
+
+  // Nulstil form
+  ['blok-navn','blok-bede','blok-afgr','blok-note'].forEach(id=>{
+    document.getElementById(id).value='';
+  });
+  document.getElementById('blok-dato').value = new Date().toISOString().split('T')[0];
+  toggleForm('blok-opret-form');
+  renderBlokke();
+  saveData();
+}
+
+function tilfoejHistorik(blokId) {
+  const blok = markBlokke.find(b=>b.id===blokId);
+  if (!blok) return;
+  const formId = 'hist-form-'+blokId;
+  document.getElementById(formId).classList.toggle('open');
+}
+
+function gemHistorik(blokId) {
+  const blok = markBlokke.find(b=>b.id===blokId);
+  if (!blok) return;
+  const afgr = document.getElementById('h-afgr-'+blokId).value.trim();
+  const dato = document.getElementById('h-dato-'+blokId).value;
+  const type = document.getElementById('h-type-'+blokId).value;
+  const note = document.getElementById('h-note-'+blokId).value.trim();
+  if (!afgr && !note) return;
+  blok.historik.unshift({ id: nextHistorikId++, afgr, dato, type, note, oprettet: new Date().toISOString() });
+  renderBlokke();
+  saveData();
+}
+
+function sletHistorik(blokId, histId) {
+  const blok = markBlokke.find(b=>b.id===blokId);
+  if (!blok) return;
+  blok.historik = blok.historik.filter(h=>h.id!==histId);
+  renderBlokke();
+  saveData();
+}
+
+function sletBlok(blokId) {
+  if (!confirm('Slet denne blok og al historik?')) return;
+  markBlokke = markBlokke.filter(b=>b.id!==blokId);
+  renderBlokke();
+  saveData();
+}
+
+function toggleBlok(blokId) {
+  const body = document.getElementById('blok-body-'+blokId);
+  const header = document.getElementById('blok-header-'+blokId);
+  if (!body) return;
+  const isOpen = body.classList.toggle('open');
+  header.classList.toggle('open', isOpen);
+}
+
+function renderBlokke() {
+  const el = document.getElementById('blok-liste');
+  if (!markBlokke.length) {
+    el.innerHTML = `<div class="card" style="text-align:center;padding:3rem;color:var(--text2)">
+      <i class="ti ti-layout-grid-add" style="font-size:36px;display:block;margin-bottom:12px;opacity:0.4"></i>
+      <div style="font-size:15px;margin-bottom:6px">Ingen markblokke endnu</div>
+      <div style="font-size:13px">Klik "Opret ny blok" for at komme i gang</div>
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = markBlokke.map(blok => {
+    const seneste = blok.historik[0];
+    const antalHist = blok.historik.length;
+    const today = new Date().toISOString().split('T')[0];
+
+    const historikHtml = blok.historik.length ? blok.historik.map(h => `
+      <div class="historik-row">
+        <div class="historik-dot" style="background:${blok.farve}"></div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <span style="font-size:14px;font-weight:500">${h.afgr||'—'}</span>
+            ${h.type==='saaning'?'<span class="badge b-purple">Såning</span>':'<span class="badge b-green">Udplantning</span>'}
+            ${h.dato?`<span class="badge b-gray">${fmtDato(h.dato)}</span>`:''}
+          </div>
+          ${h.note?`<div style="font-size:13px;color:var(--text2);margin-top:4px">${h.note}</div>`:''}
+          <div style="font-size:11px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace">${fmtDatoTid(h.oprettet)}</div>
+        </div>
+        <button class="btn btn-sm" style="color:var(--red);border:none;padding:4px 8px" onclick="sletHistorik(${blok.id},${h.id})" title="Slet"><i class="ti ti-trash"></i></button>
+      </div>`).join('') : '<div style="padding:12px 0;color:var(--text2);font-size:13px">Ingen historik endnu</div>';
+
+    return `
+    <div class="blok-card" id="blok-card-${blok.id}">
+      <div class="blok-header" id="blok-header-${blok.id}" onclick="toggleBlok(${blok.id})">
+        <div class="blok-color-bar" style="background:${blok.farve}"></div>
+        <div style="flex:1;min-width:0">
+          <div class="blok-name">${blok.navn}</div>
+          <div class="blok-meta">
+            ${blok.antalBede?blok.antalBede+' bede · ':''}
+            ${seneste?'Senest: '+seneste.afgr+' ('+fmtDato(seneste.dato)+')':'Ingen såning registreret'}
+            ${antalHist?' · '+antalHist+' post'+(antalHist!==1?'s':''):''}
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span class="badge ${prioBadge(blok.lugPrio)}" style="font-size:10px">Lug: ${prioLabel(blok.lugPrio)}</span>
+          <span class="badge ${prioBadge(blok.vandPrio)}" style="font-size:10px">Vand: ${prioLabel(blok.vandPrio)}</span>
+          <i class="ti ti-chevron-down" style="font-size:14px;color:var(--text2);margin-left:4px"></i>
+        </div>
+      </div>
+
+      <div class="blok-body" id="blok-body-${blok.id}">
+        <!-- Tilføj ny historik -->
+        <div style="margin-bottom:14px">
+          <button class="btn btn-green btn-sm" onclick="tilfoejHistorik(${blok.id})"><i class="ti ti-plus"></i> Tilføj såning / udplantning</button>
+          <button class="btn btn-sm btn-danger" onclick="sletBlok(${blok.id})" style="margin-left:6px"><i class="ti ti-trash"></i> Slet blok</button>
+        </div>
+
+        <!-- Inline tilføj form -->
+        <div class="form-panel" id="hist-form-${blok.id}" style="margin-bottom:14px">
+          <div class="form-grid fg3">
+            <div class="fl"><label>Afgrøde</label><input type="text" id="h-afgr-${blok.id}" placeholder="f.eks. Gulerod, Spinat…"></div>
+            <div class="fl"><label>Dato</label><input type="date" id="h-dato-${blok.id}" value="${today}"></div>
+            <div class="fl"><label>Type</label>
+              <select id="h-type-${blok.id}">
+                <option value="udplantning">Udplantning</option>
+                <option value="saaning">Såning</option>
+              </select>
+            </div>
+          </div>
+          <div class="fl" style="margin-bottom:10px"><label>Note</label><textarea id="h-note-${blok.id}" placeholder="f.eks. rækkerne fordelt, vejr, mængde…" style="min-height:50px"></textarea></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" onclick="gemHistorik(${blok.id})"><i class="ti ti-check"></i> Gem</button>
+            <button class="btn" onclick="tilfoejHistorik(${blok.id})">Annuller</button>
+          </div>
+        </div>
+
+        <!-- Historik liste -->
+        <div style="font-size:12px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;font-family:'DM Mono',monospace;margin-bottom:8px">Historik</div>
+        ${historikHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// LUGNING (blok-baseret)
+// ══════════════════════════════════════════════════════════════════
+
+function renderLugBlokke() {
+  const el = document.getElementById('lug-blok-grid');
+  if (!markBlokke.length) {
+    el.innerHTML = '<div class="card" style="color:var(--text2);padding:1.5rem;text-align:center">Ingen markblokke oprettet endnu</div>';
+    document.getElementById('lug-plan').innerHTML = '';
+    return;
+  }
+  el.innerHTML = markBlokke.map(blok => {
+    const p = blok.lugPrio;
+    return `<div class="card card-sm" style="display:flex;align-items:center;gap:10px">
+      <div style="width:4px;height:32px;border-radius:2px;background:${blok.farve};flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${blok.navn}</div>
+        ${blok.antalBede?`<div style="font-size:11px;color:var(--text2)">${blok.antalBede} bede</div>`:''}
+      </div>
+      <div style="display:flex;gap:4px">
+        <div onclick="setBlokLugPrio(${blok.id},3)" style="width:18px;height:18px;border-radius:50%;background:#E24B4A;border:2px solid ${p===3?'#1C1C1A':'transparent'};cursor:pointer" title="Trænger meget"></div>
+        <div onclick="setBlokLugPrio(${blok.id},2)" style="width:18px;height:18px;border-radius:50%;background:#BA7517;border:2px solid ${p===2?'#1C1C1A':'transparent'};cursor:pointer" title="Trænger lidt"></div>
+        <div onclick="setBlokLugPrio(${blok.id},1)" style="width:18px;height:18px;border-radius:50%;background:#B4B2A9;border:2px solid ${p===1?'#1C1C1A':'transparent'};cursor:pointer" title="OK"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setBlokLugPrio(id, p) {
+  const blok = markBlokke.find(b=>b.id===id);
+  if (blok) { blok.lugPrio=p; renderLugBlokke(); saveData(); }
+}
+
+function genererLugplan() {
+  const el = document.getElementById('lug-plan');
+  const hoj = markBlokke.filter(b=>b.lugPrio===3);
+  const mid = markBlokke.filter(b=>b.lugPrio===2);
+  if (!hoj.length && !mid.length) {
+    el.innerHTML='<div class="card" style="color:var(--text2);text-align:center;padding:1.5rem">Ingen blokke markeret som trængende – sæt prioriteter ovenfor</div>';
+    return;
+  }
+  const iDag = new Date().getDay();
+  const dageOrd=[1,2,3,4,5];
+  const resteDage=dageOrd.filter(d=>d>=iDag).concat(dageOrd.filter(d=>d<iDag));
+  const dagNavneMap={1:'Mandag',2:'Tirsdag',3:'Onsdag',4:'Torsdag',5:'Fredag'};
+  const alleLug=[...hoj.map(b=>({blok:b,prio:3})),...mid.map(b=>({blok:b,prio:2}))];
+  const perDag=Math.ceil(alleLug.length/resteDage.length);
+  let html='<div style="font-size:14px;font-weight:500;margin-bottom:10px">Lugeugeplan</div>';
+  resteDage.forEach((dag,i)=>{
+    const portion=alleLug.slice(i*perDag,(i+1)*perDag);
+    if(!portion.length) return;
+    html+=`<div class="day-block"><div class="day-header">
+      <div class="day-title">${dagNavneMap[dag]}</div>
+      <span class="badge b-green">${portion.length} blok${portion.length!==1?'ke':''}</span>
+    </div><div class="day-body">`;
+    portion.forEach(({blok,prio})=>{
+      html+=`<div class="task-row" style="cursor:default">
+        <div style="width:4px;height:28px;border-radius:2px;background:${blok.farve};flex-shrink:0"></div>
+        <span class="badge ${prio===3?'b-red':'b-amber'}">${prio===3?'Trænger meget':'Trænger lidt'}</span>
+        <span style="font-size:13px;flex:1">${blok.navn}</span>
+        ${blok.antalBede?`<span style="font-size:12px;color:var(--text2)">${blok.antalBede} bede</span>`:''}
+      </div>`;
+    });
+    html+='</div></div>';
+  });
+  el.innerHTML=html;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// VANDING (blok-baseret)
+// ══════════════════════════════════════════════════════════════════
+
+function renderVandSkema() {
+  const el = document.getElementById('vand-skema');
+  el.innerHTML = vandSkema.map((s,i) => `
+    <div style="display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:8px 12px">
+      <button class="toggle ${s.aktiv?'on':'off'}" onclick="toggleVandDag(${i})"></button>
+      <span style="font-size:13px;font-weight:${s.aktiv?'500':'400'};color:${s.aktiv?'var(--text)':'var(--text2)'};min-width:70px">${s.dag}</span>
+      ${s.aktiv?`<input type="number" min="1" max="30" value="${s.træk}" onchange="setVandTræk(${i},this.value)" style="width:50px;font-size:13px;padding:4px 8px;border:1px solid var(--border2);border-radius:6px;background:var(--bg)">
+      <span style="font-size:12px;color:var(--text2)">træk</span>`:''}
+    </div>`).join('');
+}
+
+function toggleVandDag(i) { vandSkema[i].aktiv=!vandSkema[i].aktiv; renderVandSkema(); saveData(); }
+function setVandTræk(i,v) { vandSkema[i].træk=Math.max(1,Math.min(30,parseInt(v)||1)); saveData(); }
+
+function renderVandBlokke() {
+  const el = document.getElementById('vand-blok-grid');
+  if (!markBlokke.length) {
+    el.innerHTML = '<div style="color:var(--text2);font-size:13px;padding:8px">Ingen markblokke oprettet endnu</div>';
+    return;
+  }
+  el.innerHTML = markBlokke.map(blok => {
+    const p = blok.vandPrio;
+    return `<div class="card card-sm" style="display:flex;align-items:center;gap:10px">
+      <div style="width:4px;height:32px;border-radius:2px;background:${blok.farve};flex-shrink:0"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${blok.navn}</div>
+      </div>
+      <div style="display:flex;gap:4px">
+        <div onclick="setBlokVandPrio(${blok.id},3)" style="width:18px;height:18px;border-radius:50%;background:#E24B4A;border:2px solid ${p===3?'#1C1C1A':'transparent'};cursor:pointer"></div>
+        <div onclick="setBlokVandPrio(${blok.id},2)" style="width:18px;height:18px;border-radius:50%;background:#BA7517;border:2px solid ${p===2?'#1C1C1A':'transparent'};cursor:pointer"></div>
+        <div onclick="setBlokVandPrio(${blok.id},1)" style="width:18px;height:18px;border-radius:50%;background:#B4B2A9;border:2px solid ${p===1?'#1C1C1A':'transparent'};cursor:pointer"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function setBlokVandPrio(id, p) {
+  const blok = markBlokke.find(b=>b.id===id);
+  if (blok) { blok.vandPrio=p; renderVandBlokke(); saveData(); }
+}
+
+function genererVandplan() {
+  const el = document.getElementById('vand-plan');
+  const aktive = vandSkema.filter(s=>s.aktiv);
+  if (!aktive.length) { el.innerHTML='<div class="card" style="color:var(--text2);text-align:center">Ingen vandingsdage valgt</div>'; return; }
+  if (!markBlokke.length) { el.innerHTML='<div class="card" style="color:var(--text2);text-align:center">Ingen markblokke oprettet</div>'; return; }
+
+  const sorted = [...markBlokke].sort((a,b)=>b.vandPrio-a.vandPrio);
+  const perDag = Math.ceil(sorted.length/aktive.length) || 1;
+
+  let html = '<div style="font-size:14px;font-weight:500;margin-bottom:10px">Genereret vandingsplan</div>';
+  sorted.forEach((blok,i) => {
+    const dagIdx = Math.floor(i/perDag) % aktive.length;
+    const dag = aktive[dagIdx];
+    // group by dag
+  });
+
+  // Redo as groups
+  const groups = {};
+  aktive.forEach(d=>{ groups[d.dag]=[]; });
+  sorted.forEach((blok,i) => {
+    const dagIdx = Math.floor(i/perDag) % aktive.length;
+    const dag = aktive[dagIdx];
+    if (groups[dag.dag]) groups[dag.dag].push(blok);
+  });
+
+  aktive.forEach(dag => {
+    const blokke = groups[dag.dag];
+    if (!blokke || !blokke.length) return;
+    html += `<div class="day-block"><div class="day-header">
+      <div class="day-title">${dag.dag}</div>
+      <span class="badge b-blue">${blokke.length} blok${blokke.length!==1?'ke':''}</span>
+    </div><div class="day-body">`;
+    blokke.forEach(b => {
+      html += `<div class="task-row" style="cursor:default">
+        <div style="width:4px;height:28px;border-radius:2px;background:${b.farve};flex-shrink:0"></div>
+        <span style="font-size:13px;flex:1;font-weight:500">${b.navn}</span>
+        ${b.historik[0]?`<span style="font-size:12px;color:var(--text2)">${b.historik[0].afgr}</span>`:''}
+        ${b.vandPrio===3?'<span class="badge b-red">Høj prio</span>':b.vandPrio===2?'<span class="badge b-amber">Mellem</span>':''}
+      </div>`;
+    });
+    html += '</div></div>';
+  });
+  el.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// DAG OVERBLIK
+// ══════════════════════════════════════════════════════════════════
+
+function renderDag() {
+  const now = new Date();
+  const dagNavn = dagNavneDK[now.getDay()];
+  document.getElementById('dag-dato').textContent = dagNavn+' '+fmtDato(now);
+  document.getElementById('dag-vanding').textContent = næsteVandingsDag();
+
+  // Tidssensitiv hilsen
+  const time = now.getHours();
+  let hilsen = 'God morgen!';
+  if      (time >= 5  && time < 11) hilsen = 'God morgen!';
+  else if (time >= 11 && time < 13) hilsen = 'God formiddag!';
+  else if (time >= 13 && time < 17) hilsen = 'God eftermiddag!';
+  else if (time >= 17 && time < 22) hilsen = 'God aften!';
+  else                               hilsen = 'God nat!';
+  document.getElementById('dag-hilsen').textContent = hilsen;
+
+  const aktiveBlokke = markBlokke.length;
+  document.getElementById('dag-blokke').textContent = aktiveBlokke;
+  const senesteAfgr = markBlokke.filter(b=>b.historik.length).map(b=>b.historik[0].afgr).slice(0,2).join(', ');
+  document.getElementById('dag-blokke-sub').textContent = senesteAfgr || 'aktive blokke';
+
+  const iDag = frivillige.filter(v=>v.dage && v.dage.includes(dagNavn));
+  document.getElementById('dag-vol-antal').textContent = iDag.length;
+  document.getElementById('dag-vol-navne').textContent = iDag.map(v=>v.navn).join(', ') || 'Ingen';
+
+  genererUgeplan();
+  hentVejr();
+}
+
+// ── VEJR (Open-Meteo, ingen API-nøgle) ───────────────────────────
+// Koordinater: Bjørnø, Sydfynske Øhav
+const VEJR_LAT = 55.09, VEJR_LON = 10.17;
+
+const VEJR_KODER = {
+  0:'☀️',1:'🌤',2:'⛅',3:'☁️',
+  45:'🌫',48:'🌫',
+  51:'🌦',53:'🌦',55:'🌧',
+  61:'🌧',63:'🌧',65:'🌧',
+  71:'🌨',73:'🌨',75:'❄️',
+  80:'🌦',81:'🌧',82:'⛈',
+  95:'⛈',96:'⛈',99:'⛈'
+};
+const VEJR_TEKST = {
+  0:'Klart',1:'Mest klart',2:'Delvis skyet',3:'Overskyet',
+  45:'Tåge',48:'Tåge',
+  51:'Let støvregn',53:'Støvregn',55:'Kraftig støvregn',
+  61:'Let regn',63:'Regn',65:'Kraftig regn',
+  71:'Let sne',73:'Sne',75:'Kraftig sne',
+  80:'Regnbyger',81:'Kraftige byger',82:'Voldsomme byger',
+  95:'Tordenvejr',96:'Torden m. hagl',99:'Torden m. hagl'
+};
+
+async function hentVejr(){
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${VEJR_LAT}&longitude=${VEJR_LON}`+
+      `&current=temperature_2m,weathercode,windspeed_10m,winddirection_10m`+
+      `&hourly=temperature_2m,weathercode,precipitation_probability`+
+      `&daily=temperature_2m_max,temperature_2m_min,precipitation_sum`+
+      `&timezone=Europe%2FCopenhagen&forecast_days=1`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const d = await res.json();
+    visVejr(d);
+  } catch(e){
+    document.getElementById('vejr-beskrivelse').textContent = 'Vejr ikke tilgængeligt';
+    console.warn('Vejr fejl:', e);
+  }
+}
+
+function vejrVindRetning(grader){
+  const retninger=['N','NØ','Ø','SØ','S','SV','V','NV'];
+  return retninger[Math.round(grader/45)%8];
+}
+
+function visVejr(d){
+  const c = d.current;
+  const daily = d.daily;
+  const hourly = d.hourly;
+
+  // Nuværende
+  document.getElementById('vejr-ikon').textContent = VEJR_KODER[c.weathercode]||'🌡';
+  document.getElementById('vejr-temp').textContent = Math.round(c.temperature_2m)+'°C';
+  document.getElementById('vejr-beskrivelse').textContent = VEJR_TEKST[c.weathercode]||'';
+  document.getElementById('vejr-vind').textContent = `💨 ${Math.round(c.windspeed_10m)} km/t ${vejrVindRetning(c.winddirection_10m)}`;
+  document.getElementById('vejr-minmax').textContent = `↑${Math.round(daily.temperature_2m_max[0])}° ↓${Math.round(daily.temperature_2m_min[0])}°`;
+  const nedbor = daily.precipitation_sum[0];
+  document.getElementById('vejr-nedbor').textContent = nedbor > 0 ? `🌧 ${nedbor.toFixed(1)} mm` : '☀️ Ingen nedbør';
+  const nu = new Date();
+  document.getElementById('vejr-opdateret').textContent = `Opdateret ${nu.getHours()}:${String(nu.getMinutes()).padStart(2,'0')}`;
+
+  // Timeoversigt — næste 8 timer
+  const nowH = new Date().getHours();
+  const tider = hourly.time.map((t,i)=>({
+    time: t, hour: new Date(t).getHours(),
+    temp: hourly.temperature_2m[i],
+    kode: hourly.weathercode[i],
+    nedbor: hourly.precipitation_probability[i]
+  })).filter(x=> new Date(x.time) >= new Date() ).slice(0,8);
+
+  document.getElementById('vejr-timer').innerHTML = tider.map(t=>`
+    <div style="flex:0 0 auto;text-align:center;padding:8px 10px;background:var(--bg);border-radius:var(--radius);min-width:56px">
+      <div style="font-size:10px;color:var(--text2);font-family:'DM Mono',monospace">${t.hour}:00</div>
+      <div style="font-size:20px;margin:3px 0">${VEJR_KODER[t.kode]||'🌡'}</div>
+      <div style="font-size:12px;font-weight:500">${Math.round(t.temp)}°</div>
+      ${t.nedbor>20?`<div style="font-size:10px;color:var(--blue)">${t.nedbor}%</div>`:''}
+    </div>`).join('');
+}
+
+function genererUgeplan() {
+  const el = document.getElementById('dag-plan');
+  const now = new Date();
+  const dagNavn = dagNavneDK[now.getDay()];
+  const opgaver = [];
+
+  // Vanding?
+  const vanddag = vandSkema.find(s=>s.aktiv && s.dag===dagNavn);
+  if (vanddag && markBlokke.length) {
+    const hoj = markBlokke.filter(b=>b.vandPrio===3);
+    const mid = markBlokke.filter(b=>b.vandPrio===2);
+    const blokke = [...hoj,...mid,...markBlokke.filter(b=>b.vandPrio===1)].slice(0,vanddag.træk);
+    if (blokke.length) opgaver.push({type:'vanding', blokke, prio: hoj.length?3:mid.length?2:1});
+  }
+
+  // Lugning høj prio
+  const lugHoj = markBlokke.filter(b=>b.lugPrio===3);
+  const lugMid = markBlokke.filter(b=>b.lugPrio===2);
+  if (lugHoj.length) opgaver.push({type:'lugning',blokke:lugHoj,prio:3,label:'Høj prioritet lugning'});
+  if (lugMid.length) opgaver.push({type:'lugning',blokke:lugMid,prio:2,label:'Lugning (trænger lidt)'});
+
+  // Bestillingshøst
+  const bestilling = saanOps.filter(s=>s.type==='host_bestilling'&&s.status!=='udført');
+  bestilling.forEach(s=>opgaver.unshift({type:'host_bestilling',opgave:s,prio:3}));
+
+  // Såning i ugen
+  saanOps.filter(s=>s.status!=='udført'&&s.type!=='host_bestilling').forEach(s=>opgaver.push({type:'saaning',opgave:s,prio:2}));
+
+  // Høst klar
+  hostOps.filter(h=>h.status==='klar').forEach(h=>opgaver.push({type:'host',opgave:h,prio:2}));
+
+  dagOpgaver = opgaver;
+  document.getElementById('dag-opgaver').textContent = opgaver.length;
+
+  if (!opgaver.length) {
+    el.innerHTML='<div class="card" style="text-align:center;padding:2rem;color:var(--text2)"><i class="ti ti-check" style="font-size:28px;display:block;margin-bottom:8px;color:var(--green)"></i>Ingen planlagte opgaver i dag</div>';
+    return;
+  }
+
+  const typeInfo = {
+    vanding:{icon:'ti-droplet',bg:'#E8F0FA',col:'var(--blue)'},
+    lugning:{icon:'ti-cut',bg:'#EAF0E8',col:'var(--green)'},
+    saaning:{icon:'ti-seeding',bg:'#F0ECFC',col:'var(--purple)'},
+    host:{icon:'ti-basket',bg:'#FDF2DC',col:'var(--amber)'},
+    host_bestilling:{icon:'ti-basket',bg:'#FAEEDA',col:'var(--amber)'},
+  };
+
+  let html='';
+  opgaver.forEach((o,i) => {
+    const info = typeInfo[o.type];
+    let titel='', sub='';
+    if (o.type==='vanding') {
+      titel='Vanding'; sub=o.blokke.map(b=>b.navn).join(', ');
+    } else if (o.type==='lugning') {
+      titel=o.label; sub=o.blokke.map(b=>b.navn).join(', ');
+    } else if (o.type==='host_bestilling') {
+      titel='⚡ Bestillingshøst'; sub=o.opgave.note||'';
+    } else if (o.type==='saaning') {
+      titel=(o.opgave.type==='saaning'?'Såning':'Udplantning')+' · '+o.opgave.bed;
+      sub=o.opgave.afgr;
+    } else if (o.type==='host') {
+      titel='Høst klar · '+o.opgave.bed; sub=o.opgave.afgr;
+    }
+    if (i===0 || (i>0 && opgaver[i-1].type!==o.type)) {
+      if (o.type==='vanding' || (i===0 && o.type!=='vanding')) {
+        html+=`<div class="divider-label">${o.type==='vanding'?'Vanding':'Opgaver'}</div><div class="day-block"><div class="day-body">`;
+      }
+    }
+    html+=`<div class="task-row${o.done?' done':''}" onclick="toggleDagTask(${i})">
+      <div class="task-check${o.done?' checked':''}" id="tc-${i}"></div>
+      <div class="task-type-icon" style="background:${info.bg}"><i class="ti ${info.icon}" style="color:${info.col}"></i></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:500">${titel}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px">${sub}</div>
+      </div>
+      ${o.prio===3?'<span class="badge b-red">Høj prio</span>':o.prio===2?'<span class="badge b-amber">Mellem</span>':''}
+    </div>`;
+  });
+  html+='</div></div>';
+  el.innerHTML=html;
+}
+
+function toggleDagTask(i) {
+  if (!dagOpgaver[i]) return;
+  dagOpgaver[i].done=!dagOpgaver[i].done;
+  const tc=document.getElementById('tc-'+i);
+  if(tc){ tc.classList.toggle('checked'); tc.closest('.task-row').classList.toggle('done'); }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// SÅNING
+// ══════════════════════════════════════════════════════════════════
+
+function addSaaning() {
+  const type=document.getElementById('saa-type').value;
+  const bed=document.getElementById('saa-bed').value.trim();
+  const dato=document.getElementById('saa-dato').value;
+  const afgr=document.getElementById('saa-afgr').value.trim();
+  const vol=document.getElementById('saa-vol').value;
+  const note=document.getElementById('saa-note').value;
+  if(!bed) return;
+  saanOps.unshift({id:nextSaaId++,type,bed,dato,afgr,vol,note,status:'planlagt'});
+  ['saa-bed','saa-afgr','saa-note'].forEach(id=>document.getElementById(id).value='');
+  toggleForm('saa-form');
+  renderSaaning();
+  saveData();
+}
+
+function renderSaaning() {
+  const el=document.getElementById('saa-liste');
+  if(!saanOps.length){
+    el.innerHTML='<div class="card" style="text-align:center;padding:2rem;color:var(--text2)"><i class="ti ti-seeding" style="font-size:28px;display:block;margin-bottom:8px"></i>Ingen såning eller udplantning planlagt endnu</div>';
+    return;
+  }
+  const typeFarve={saaning:'#F0ECFC',udplantning:'#EAF0E8',host_bestilling:'#FAEEDA'};
+  const typeIkon={saaning:'ti-seeding',udplantning:'ti-plant-2',host_bestilling:'ti-basket'};
+  const statusBadge={planlagt:'b-blue',udført:'b-teal'};
+  el.innerHTML=saanOps.map(o=>`
+    <div class="card card-sm" style="display:flex;align-items:center;gap:12px">
+      <div class="task-type-icon" style="background:${typeFarve[o.type]||'#E8F0FA'}"><i class="ti ${typeIkon[o.type]||'ti-calendar'}" style="color:var(--purple)"></i></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:500">${o.type==='host_bestilling'?'⚡ Bestillingshøst':(o.type==='saaning'?'Såning':'Udplantning')+' · '+o.bed+(o.afgr?' – '+o.afgr:'')}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px">${o.dato?'Dato: '+o.dato:''} ${o.vol?'· '+o.vol:''} ${o.note?'· '+o.note:''}</div>
+      </div>
+      <span class="badge ${statusBadge[o.status]}">${o.status}</span>
+      ${o.status!=='udført'?`<button class="btn btn-sm" onclick="setSaaStatus(${o.id},'udført')">Udført</button>`:''}
+      <button class="btn btn-sm" style="color:var(--red)" onclick="deleteSaa(${o.id})"><i class="ti ti-trash"></i></button>
+    </div>`).join('');
+}
+
+function setSaaStatus(id,st){const o=saanOps.find(x=>x.id===id);if(o)o.status=st;renderSaaning();saveData();}
+function deleteSaa(id){saanOps=saanOps.filter(x=>x.id!==id);renderSaaning();saveData();}
+
+// ══════════════════════════════════════════════════════════════════
+// HØST
+// ══════════════════════════════════════════════════════════════════
+
+// ══════════════════════════════════════════════════════════════════
+// HØST: TAB-NAVIGATION
+// ══════════════════════════════════════════════════════════════════
+
+let _hostTab = 'kunder';
+let _bestLinjer = []; // linjer i ny-bestilling-formularen
+
+function showHostTab(tab){
+  _hostTab = tab;
+  ['kunder','bestillinger','levering'].forEach(t=>{
+    const el=document.getElementById('host-tab-'+t);
+    if(el) el.style.display=(t===tab)?'block':'none';
+    const btn=document.getElementById('htab-btn-'+t);
+    if(btn){ btn.style.background=(t===tab)?'var(--green)':''; btn.style.color=(t===tab)?'#fff':''; }
+  });
+  if(tab==='kunder')       renderKundeliste();
+  if(tab==='bestillinger') { renderBestKundeSelect(); renderBestillinger(); if(!_bestLinjer.length) addBestLinje(); }
+  if(tab==='levering')     { renderHoestliste(); renderPakBestillinger(); renderFsHistorik(); }
+}
+
+// ── KUNDER ────────────────────────────────────────────────────────
+
+function addKunde(){
+  const navn=document.getElementById('kunde-navn').value.trim();
+  if(!navn) return;
+  const adresse=document.getElementById('kunde-adresse').value.trim();
+  const kontakt=document.getElementById('kunde-kontakt').value.trim();
+  const note=document.getElementById('kunde-note').value.trim();
+  kunder.push({id:nextKundeId++,navn,adresse,kontakt,note});
+  ['kunde-navn','kunde-adresse','kunde-kontakt','kunde-note'].forEach(id=>document.getElementById(id).value='');
+  toggleForm('kunde-form');
+  renderKundeliste();
+  saveData();
+}
+
+function renderKundeliste(){
+  const el=document.getElementById('kunde-liste');
+  if(!el) return;
+  if(!kunder.length){
+    el.innerHTML='<div class="card" style="text-align:center;padding:2rem;color:var(--text2)">Ingen kunder oprettet endnu</div>';
+    return;
+  }
+  el.innerHTML=kunder.map(k=>`
+    <div class="card card-sm" style="display:flex;align-items:center;gap:12px">
+      <div style="width:38px;height:38px;border-radius:50%;background:var(--teal-bg);color:var(--teal);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;flex-shrink:0">
+        ${k.navn.slice(0,2).toUpperCase()}
+      </div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:500">${k.navn}</div>
+        <div style="font-size:12px;color:var(--text2)">${[k.adresse,k.kontakt,k.note].filter(Boolean).join(' · ')}</div>
+      </div>
+      <button class="btn btn-sm" style="color:var(--red)" onclick="deleteKunde(${k.id})"><i class="ti ti-trash"></i></button>
+    </div>`).join('');
+}
+
+function deleteKunde(id){
+  if(!confirm('Slet kunde?')) return;
+  kunder=kunder.filter(x=>x.id!==id);
+  renderKundeliste();
+  saveData();
+}
+
+// ── BESTILLINGER ─────────────────────────────────────────────────
+
+let bestillinger = [];
+let nextBestId = 1;
+
+function renderBestKundeSelect(){
+  const sel=document.getElementById('best-kunde');
+  if(!sel) return;
+  sel.innerHTML='<option value="">— Vælg kunde —</option>'+
+    kunder.map(k=>`<option value="${k.id}">${k.navn}</option>`).join('');
+}
+
+function addBestLinje(){
+  _bestLinjer.push({afgr:'',maengde:'',enhed:'kg'});
+  renderBestLinjer();
+}
+
+function renderBestLinjer(){
+  const container=document.getElementById('best-linjer');
+  if(!container) return;
+  const enheder=['kg','bundt','bakke','kasse','pose','stk'];
+  container.innerHTML=_bestLinjer.map((l,i)=>`
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+      <input type="text" placeholder="Afgrøde" value="${l.afgr}" oninput="_bestLinjer[${i}].afgr=this.value"
+        style="flex:2;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;background:var(--bg);color:var(--text)">
+      <input type="number" placeholder="Antal" value="${l.maengde}" oninput="_bestLinjer[${i}].maengde=this.value" min="0" step="0.1"
+        style="width:80px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;background:var(--bg);color:var(--text)">
+      <select onchange="_bestLinjer[${i}].enhed=this.value"
+        style="padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;background:var(--bg);color:var(--text)">
+        ${enheder.map(e=>`<option value="${e}" ${e===l.enhed?'selected':''}>${e}</option>`).join('')}
+      </select>
+      <button class="btn btn-sm" style="color:var(--red);flex-shrink:0" onclick="fjernBestLinje(${i})"><i class="ti ti-x"></i></button>
+    </div>`).join('');
+}
+
+function fjernBestLinje(i){ _bestLinjer.splice(i,1); renderBestLinjer(); }
+
+function gemBestilling(){
+  const kundeId=parseInt(document.getElementById('best-kunde').value);
+  const kunde=kunder.find(k=>k.id===kundeId);
+  if(!kunde){ alert('Vælg en kunde'); return; }
+  const dato=document.getElementById('best-dato').value;
+  const note=document.getElementById('best-note').value.trim();
+  const linjer=_bestLinjer.filter(l=>l.afgr.trim());
+  if(!linjer.length){ alert('Tilføj mindst én linje'); return; }
+  bestillinger.unshift({
+    id:nextBestId++,
+    kundeId, kundNavn:kunde.navn,
+    dato, note,
+    linjer: linjer.map(l=>({...l, pakket:'', pakketEnhed:l.enhed})),
+    status:'aktiv' // aktiv | pakket | leveret
+  });
+  _bestLinjer=[];
+  toggleForm('best-form');
+  renderBestillinger();
+  saveData();
+}
+
+function renderBestillinger(){
+  const el=document.getElementById('bestillinger-liste');
+  if(!el) return;
+  const aktive=bestillinger.filter(b=>b.status!=='leveret');
+  const leverede=bestillinger.filter(b=>b.status==='leveret');
+  if(!bestillinger.length){
+    el.innerHTML='<div class="card" style="text-align:center;padding:2rem;color:var(--text2)">Ingen bestillinger endnu</div>';
+    return;
+  }
+  const visB = (b,ekstra='')=>`
+    <div class="card card-sm" style="margin-bottom:8px ${b.status==='leveret'?';opacity:0.6':''}">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span style="font-size:14px;font-weight:600">${b.kundNavn}</span>
+            <span class="badge ${b.status==='leveret'?'b-teal':b.status==='pakket'?'b-amber':'b-green'}">${b.status==='leveret'?'Leveret':b.status==='pakket'?'Pakket':'Aktiv'}</span>
+            ${b.dato?`<span style="font-size:12px;color:var(--text2)">${fmtDato(b.dato)}</span>`:''}
+          </div>
+          <div style="font-size:12px;color:var(--text2)">${b.linjer.map(l=>l.maengde+' '+l.enhed+' '+l.afgr).join(' · ')}</div>
+          ${b.note?`<div style="font-size:12px;color:var(--text2);margin-top:2px;font-style:italic">${b.note}</div>`:''}
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          ${b.status!=='leveret'?`<button class="btn btn-sm" onclick="markerLeveret(${b.id})"><i class="ti ti-check"></i></button>`:''}
+          <button class="btn btn-sm" style="color:var(--red)" onclick="sletBestilling(${b.id})"><i class="ti ti-trash"></i></button>
+        </div>
+      </div>
+    </div>`;
+  let html = aktive.map(b=>visB(b)).join('');
+  if(leverede.length){
+    html += `<div style="font-size:12px;color:var(--text2);margin:14px 0 6px;font-family:'DM Mono',monospace">AFSLUTTEDE</div>`;
+    html += leverede.slice(0,5).map(b=>visB(b)).join('');
+  }
+  el.innerHTML = html;
+}
+
+function markerLeveret(id){ const b=bestillinger.find(x=>x.id===id); if(b) b.status='leveret'; renderBestillinger(); saveData(); }
+function sletBestilling(id){ if(!confirm('Slet bestilling?')) return; bestillinger=bestillinger.filter(x=>x.id!==id); renderBestillinger(); saveData(); }
+
+// ── LEVERING: HØSTLISTE + PAK ────────────────────────────────────
+
+function renderHoestliste(){
+  const el=document.getElementById('hoest-liste-indhold');
+  if(!el) return;
+  const aktive=bestillinger.filter(b=>b.status==='aktiv');
+  if(!aktive.length){
+    el.innerHTML='<div style="text-align:center;padding:1.5rem;color:var(--text2);font-size:13px">Ingen aktive bestillinger</div>';
+    return;
+  }
+  // Gruppér på tværs af alle bestillinger
+  const samlet={};
+  aktive.forEach(b=>{
+    b.linjer.forEach(l=>{
+      const key=l.afgr.toLowerCase().trim();
+      if(!samlet[key]) samlet[key]={afgr:l.afgr,enheder:{},bestillinger:[]};
+      const enhed=l.enhed;
+      samlet[key].enheder[enhed]=(samlet[key].enheder[enhed]||0)+(parseFloat(l.maengde)||0);
+      samlet[key].bestillinger.push(b.kundNavn);
+    });
+  });
+  el.innerHTML = Object.values(samlet).map(s=>{
+    const mængder=Object.entries(s.enheder).map(([e,m])=>m+' '+e).join(' + ');
+    const kunder=[...new Set(s.bestillinger)];
+    return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0"></div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:500">${s.afgr}</div>
+        <div style="font-size:12px;color:var(--text2)">${kunder.length} kunde${kunder.length!==1?'r':''}: ${kunder.join(', ')}</div>
+      </div>
+      <div style="font-size:15px;font-weight:600;color:var(--green)">${mængder}</div>
+    </div>`;
+  }).join('');
+}
+
+function printHoestliste(){
+  const aktive=bestillinger.filter(b=>b.status==='aktiv');
+  const samlet={};
+  aktive.forEach(b=>{
+    b.linjer.forEach(l=>{
+      const key=l.afgr.toLowerCase().trim();
+      if(!samlet[key]) samlet[key]={afgr:l.afgr,enheder:{},bestillinger:[]};
+      samlet[key].enheder[l.enhed]=(samlet[key].enheder[l.enhed]||0)+(parseFloat(l.maengde)||0);
+      samlet[key].bestillinger.push(b.kundNavn);
+    });
+  });
+  const rækker=Object.values(samlet).map(s=>{
+    const m=Object.entries(s.enheder).map(([e,v])=>v+' '+e).join(' + ');
+    return `<tr><td>${s.afgr}</td><td style="text-align:right;font-weight:600">${m}</td><td style="text-align:right;color:#666">${[...new Set(s.bestillinger)].join(', ')}</td></tr>`;
+  }).join('');
+  const dato=new Date().toLocaleDateString('da-DK',{weekday:'long',day:'numeric',month:'long'});
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&family=DM+Mono&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;padding:40px;max-width:600px;margin:0 auto;color:#1a1a1a}
+    h1{font-family:'DM Serif Display',serif;font-size:24px;margin-bottom:4px}
+    .sub{font-size:13px;color:#666;margin-bottom:24px}
+    table{width:100%;border-collapse:collapse}
+    th{font-size:11px;text-transform:uppercase;letter-spacing:0.5px;font-family:'DM Mono',monospace;color:#888;border-bottom:2px solid #e5e7eb;padding:8px 0;text-align:left}
+    th:nth-child(2),td:nth-child(2){text-align:right}
+    td{padding:12px 0;border-bottom:1px solid #f0f0ee;font-size:14px;vertical-align:top}
+    .footer{font-size:10px;color:#aaa;font-family:'DM Mono',monospace;margin-top:24px;padding-top:12px;border-top:1px solid #e5e7eb}
+    .check{width:24px;height:24px;border:2px solid #ccc;border-radius:4px;display:inline-block;margin-right:8px;vertical-align:middle}
+  </style></head><body>
+  <h1>Høstliste</h1>
+  <div class="sub">Økobo · Bjørnø · ${dato}</div>
+  <table>
+    <thead><tr><th>Afgrøde</th><th>Total mængde</th><th>Kunder</th></tr></thead>
+    <tbody>${rækker}</tbody>
+  </table>
+  <div class="footer">Økobo ApS · Bjørnø · Udskrevet ${new Date().toLocaleTimeString('da-DK',{hour:'2-digit',minute:'2-digit'})}</div>
+  </body></html>`;
+  const w=window.open('','_blank','width=700,height=900');
+  w.document.write(html); w.document.close(); w.focus();
+  setTimeout(()=>w.print(),400);
+}
+
+function renderPakBestillinger(){
+  const el=document.getElementById('pak-bestillinger');
+  if(!el) return;
+  const aktive=bestillinger.filter(b=>b.status==='aktiv');
+  if(!aktive.length){
+    el.innerHTML='<div class="card" style="text-align:center;padding:1.5rem;color:var(--text2);font-size:13px">Ingen aktive bestillinger at pakke</div>';
+    return;
+  }
+  const enheder=['kg','bundt','bakke','kasse','pose','stk'];
+  el.innerHTML=aktive.map(b=>`
+    <div class="card" style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">${b.kundNavn.slice(0,2).toUpperCase()}</div>
+        <div>
+          <div style="font-size:14px;font-weight:600">${b.kundNavn}</div>
+          <div style="font-size:12px;color:var(--text2)">${b.dato?'Levering '+fmtDato(b.dato):''}${b.note?' · '+b.note:''}</div>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;font-family:'DM Mono',monospace;margin-bottom:8px;display:grid;grid-template-columns:1fr 100px 80px 100px 30px;gap:6px">
+        <span>Afgrøde</span><span style="text-align:right">Bestilt</span><span></span><span style="text-align:right">Pakket</span><span></span>
+      </div>
+      ${b.linjer.map((l,i)=>`
+        <div style="display:grid;grid-template-columns:1fr 100px 80px 100px 30px;gap:6px;align-items:center;margin-bottom:6px">
+          <div style="font-size:13px;font-weight:500">${l.afgr}</div>
+          <div style="font-size:13px;text-align:right;color:var(--text2)">${l.maengde} ${l.enhed}</div>
+          <div style="font-size:11px;color:var(--text3);text-align:center">→</div>
+          <input type="number" value="${l.pakket||''}" placeholder="${l.maengde}" min="0" step="0.1"
+            oninput="opdaterPakket(${b.id},${i},this.value)"
+            style="padding:6px 8px;border:1px solid var(--border);border-radius:var(--radius);font-size:13px;background:var(--bg);color:var(--text);text-align:right">
+          <select onchange="opdaterPakketEnhed(${b.id},${i},this.value)"
+            style="padding:6px 4px;border:1px solid var(--border);border-radius:var(--radius);font-size:11px;background:var(--bg);color:var(--text)">
+            ${enheder.map(e=>`<option value="${e}" ${e===(l.pakketEnhed||l.enhed)?'selected':''}>${e}</option>`).join('')}
+          </select>
+        </div>`).join('')}
+      <div style="display:flex;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+        <button class="btn btn-primary btn-sm" onclick="genererFsFragBestilling(${b.id})"><i class="ti ti-file-invoice"></i> Generer følgeseddel</button>
+      </div>
+    </div>`).join('');
+}
+
+function opdaterPakket(bestId,linjeIdx,val){
+  const b=bestillinger.find(x=>x.id===bestId);
+  if(b && b.linjer[linjeIdx]) b.linjer[linjeIdx].pakket=val;
+  saveData();
+}
+function opdaterPakketEnhed(bestId,linjeIdx,val){
+  const b=bestillinger.find(x=>x.id===bestId);
+  if(b && b.linjer[linjeIdx]) b.linjer[linjeIdx].pakketEnhed=val;
+  saveData();
+}
+
+function genererFsFragBestilling(bestId){
+  const b=bestillinger.find(x=>x.id===bestId);
+  if(!b) return;
+  const kunde=kunder.find(k=>k.id===b.kundeId)||{navn:b.kundNavn,adresse:'',kontakt:''};
+  const nr='FS-'+String(nextFsId).padStart(4,'0');
+  const dato=b.dato||new Date().toISOString().slice(0,10);
+
+  // Gem følgeseddel
+  const fs={id:nextFsId++,nr,kundeId:b.kundeId,kundNavn:kunde.navn,dato,note:b.note||'',
+    linjer:b.linjer.map(l=>({afgr:l.afgr,bestilt:l.maengde,enhed:l.enhed,pakket:l.pakket||l.maengde,pakketEnhed:l.pakketEnhed||l.enhed}))};
+  foelgesedler.unshift(fs);
+  b.status='pakket';
+  saveData();
+
+  // Vis preview
+  visFs(fs, kunde);
+  renderPakBestillinger();
+  renderFsHistorik();
+}
+
+function visFs(fs, kunde){
+  document.getElementById('fs-nr-visning').textContent=fs.nr;
+  document.getElementById('fs-dato-visning').textContent=fmtDato(fs.dato);
+  document.getElementById('fs-kunde-visning').textContent=kunde.navn;
+  document.getElementById('fs-adresse-visning').textContent=[kunde.adresse,kunde.kontakt].filter(Boolean).join(' · ');
+  document.getElementById('fs-note-visning').textContent=fs.note?'Note: '+fs.note:'';
+  document.getElementById('fs-tbl-body').innerHTML=fs.linjer.map(l=>`
+    <tr style="border-bottom:1px solid #f0f0ee">
+      <td style="padding:10px 0;font-size:13px">${l.afgr}</td>
+      <td style="text-align:right;padding:10px 0;font-size:13px;color:#888">${l.bestilt} ${l.enhed}</td>
+      <td style="text-align:right;padding:10px 0;font-size:14px;font-weight:600">${l.pakket} ${l.pakketEnhed}</td>
+    </tr>`).join('');
+  document.getElementById('fs-preview').style.display='block';
+  document.getElementById('fs-preview').scrollIntoView({behavior:'smooth'});
+}
+
+function renderFsHistorik(){
+  const el=document.getElementById('fs-historik');
+  if(!el) return;
+  if(!foelgesedler.length){
+    el.innerHTML='<div class="card" style="text-align:center;padding:2rem;color:var(--text2)">Ingen følgesedler endnu</div>';
+    return;
+  }
+  el.innerHTML=foelgesedler.map(fs=>`
+    <div class="card card-sm" style="display:flex;align-items:center;gap:12px;cursor:pointer" onclick="visGammelFs(${fs.id})">
+      <div style="flex:1">
+        <div style="font-size:13px;font-weight:600;font-family:'DM Mono',monospace;color:var(--green)">${fs.nr}</div>
+        <div style="font-size:13px;font-weight:500">${fs.kundNavn}</div>
+        <div style="font-size:12px;color:var(--text2)">${fmtDato(fs.dato)} · ${fs.linjer.length} linje${fs.linjer.length!==1?'r':''}</div>
+      </div>
+      <button class="btn btn-sm" onclick="event.stopPropagation();printGammelFs(${fs.id})"><i class="ti ti-printer"></i></button>
+      <button class="btn btn-sm" style="color:var(--red)" onclick="event.stopPropagation();deleteFsEntry(${fs.id})"><i class="ti ti-trash"></i></button>
+    </div>`).join('');
+}
+
+function visGammelFs(id){
+  const fs=foelgesedler.find(x=>x.id===id);
+  if(!fs) return;
+  const kunde=kunder.find(k=>k.id===fs.kundeId)||{navn:fs.kundNavn,adresse:'',kontakt:''};
+  visFs(fs, kunde);
+}
+
+function printFs(){
+  const area=document.getElementById('fs-print-area');
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&family=DM+Mono&display=swap');
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;font-size:13px;color:#1a1a1a;padding:40px;max-width:620px;margin:0 auto}
+    table{width:100%;border-collapse:collapse}
+    thead tr{border-bottom:2px solid #e5e7eb}
+    th{font-size:10px;text-transform:uppercase;letter-spacing:0.5px;font-family:'DM Mono',monospace;color:#888;padding:6px 0;text-align:left}
+    th:nth-child(2),td:nth-child(2){text-align:right}
+    th:nth-child(3),td:nth-child(3){text-align:right}
+    td{padding:10px 0;border-bottom:1px solid #f0f0ee;font-size:13px}
+    td:nth-child(3){font-weight:600;font-size:14px}
+  </style></head><body>
+  ${area.innerHTML}
+  </body></html>`;
+  const w=window.open('','_blank','width=700,height=900');
+  w.document.write(html); w.document.close(); w.focus();
+  setTimeout(()=>w.print(),400);
+}
+
+function printGammelFs(id){ visGammelFs(id); setTimeout(printFs,300); }
+function deleteFsEntry(id){ if(!confirm('Slet følgeseddel?')) return; foelgesedler=foelgesedler.filter(x=>x.id!==id); renderFsHistorik(); saveData(); }
+
+// Stub til bagudkompatibilitet (bruges ikke længere aktivt)
+function addHost(){ saveData(); }
+function renderHost(){}
+
+// ══════════════════════════════════════════════════════════════════
+// FRIVILLIGE
+// ══════════════════════════════════════════════════════════════════
+
+function addVol(){
+  const navn=document.getElementById('vol-navn').value.trim();
+  if(!navn) return;
+  const dage=document.getElementById('vol-dage').value;
+  const note=document.getElementById('vol-note').value;
+  frivillige.push({id:nextVolId++,navn,dage,note});
+  ['vol-navn','vol-dage','vol-note'].forEach(id=>document.getElementById(id).value='');
+  toggleForm('vol-form');
+  renderFrivillige();
+  updateVolSelects();
+  saveData();
+}
+
+function renderFrivillige(){
+  const el=document.getElementById('vol-liste-admin');
+  if(!frivillige.length){
+    el.innerHTML='<div class="card" style="text-align:center;padding:2rem;color:var(--text2)">Ingen frivillige tilføjet endnu</div>';
+    return;
+  }
+  el.innerHTML=frivillige.map(v=>`
+    <div class="card card-sm" style="display:flex;align-items:center;gap:12px">
+      <div style="width:38px;height:38px;border-radius:50%;background:var(--green-bg);color:var(--green);display:flex;align-items:center;justify-content:center;font-weight:500;font-size:13px;flex-shrink:0">
+        ${v.navn.slice(0,2).toUpperCase()}
+      </div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:500">${v.navn}</div>
+        <div style="font-size:12px;color:var(--text2)">Dage: ${v.dage||'—'}${v.note?' · '+v.note:''}</div>
+      </div>
+      <button class="btn btn-sm" style="color:var(--red)" onclick="deleteVol(${v.id})"><i class="ti ti-trash"></i></button>
+    </div>`).join('');
+}
+
+function deleteVol(id){frivillige=frivillige.filter(x=>x.id!==id);renderFrivillige();updateVolSelects();saveData();}
+
+function updateVolSelects(){
+  ['saa-vol'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.innerHTML='<option value="">— Ikke tildelt —</option>'+frivillige.map(v=>`<option>${v.navn}</option>`).join('');
+  });
+}
+
+// ══════════════════════════════════════════════════════════════════
+// MARKNOTES
+// ══════════════════════════════════════════════════════════════════
+
+function renderNoter(){
+  const now=new Date();
+  const el=document.getElementById('noter-dato-txt');
+  if(el) el.textContent=fmtDatoTid(now);
+  renderDagsnoteHistorik();
+}
+
+function gemDagsnote(){
+  const input=document.getElementById('dagsnote-input');
+  const tekst=input.value.trim();
+  if(!tekst) return;
+  dagsnoteHistorik.unshift({tekst,dato:new Date().toISOString()});
+  input.value='';
+  renderDagsnoteHistorik();
+  saveData();
+}
+
+function renderDagsnoteHistorik(){
+  const el=document.getElementById('dagsnote-historik');
+  if(!dagsnoteHistorik.length){
+    el.innerHTML='<div class="card" style="text-align:center;padding:1.5rem;color:var(--text2)">Ingen dagsnotes endnu</div>';
+    return;
+  }
+  el.innerHTML=dagsnoteHistorik.map((n,i)=>`
+    <div class="card card-sm" style="display:flex;gap:12px;align-items:flex-start;margin-bottom:8px">
+      <div style="flex-shrink:0;font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;padding-top:2px;white-space:nowrap">${fmtDatoTid(n.dato)}</div>
+      <div style="flex:1;font-size:14px;color:var(--text);white-space:pre-wrap">${n.tekst}</div>
+      <button class="btn btn-sm" style="color:var(--red);flex-shrink:0" onclick="deleteDagsnote(${i})"><i class="ti ti-trash"></i></button>
+    </div>`).join('');
+}
+
+function deleteDagsnote(i){dagsnoteHistorik.splice(i,1);renderDagsnoteHistorik();saveData();}
+
+// ══════════════════════════════════════════════════════════════════
+// DRIVHUS
+// ══════════════════════════════════════════════════════════════════
+
+const typeIconDH={vanding:'ti-droplet',lugning:'ti-cut',host:'ti-basket',saaning:'ti-seeding'};
+const typeBgDH  ={vanding:'#E8F0FA', lugning:'#EAF0E8',host:'#FDF2DC', saaning:'#F0ECFC'};
+const typeColDH ={vanding:'var(--blue)',lugning:'var(--green)',host:'var(--amber)',saaning:'var(--purple)'};
+const typeLblDH ={vanding:'Vanding', lugning:'Lugning', host:'Høst',   saaning:'Såning'};
+
+function renderDrivhus(){
+  const grid=document.getElementById('dh-bed-grid');
+  const tomColors={Tomater:'#E24B4A',Salat:'#5A8F52',Radisser:'#C04080',Forårsløg:'#3A8A6A'};
+  grid.innerHTML=DRIVHUS_BEDE.map(b=>{
+    const aktive=drivhusOps.filter(o=>o.bed===b.id&&o.status!=='udført');
+    const col=tomColors[b.afgr]||'#888780';
+    return `<div class="card" style="text-align:center;padding:14px 10px;border-top:3px solid ${col}">
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);margin-bottom:4px">${b.id}</div>
+      <div style="font-size:14px;font-weight:500;margin-bottom:8px">${b.afgr}</div>
+      <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--text2)">
+          <span>Vand</span>
+          <div style="display:flex;gap:3px">
+            <div onclick="setDHPrio('${b.id}','vand',3)" style="width:12px;height:12px;border-radius:50%;background:#E24B4A;border:2px solid ${b.vandPrio===3?'#1C1C1A':'transparent'};cursor:pointer"></div>
+            <div onclick="setDHPrio('${b.id}','vand',2)" style="width:12px;height:12px;border-radius:50%;background:#BA7517;border:2px solid ${b.vandPrio===2?'#1C1C1A':'transparent'};cursor:pointer"></div>
+            <div onclick="setDHPrio('${b.id}','vand',1)" style="width:12px;height:12px;border-radius:50%;background:#B4B2A9;border:2px solid ${b.vandPrio===1?'#1C1C1A':'transparent'};cursor:pointer"></div>
+          </div>
+        </div>
+      </div>
+      ${aktive.length?`<span class="badge b-amber">${aktive.length} opgave${aktive.length>1?'r':''}</span>`:`<span class="badge b-gray">Ingen opgaver</span>`}
+    </div>`;
+  }).join('');
+
+  const el=document.getElementById('dh-opgave-liste');
+  if(!drivhusOps.length){
+    el.innerHTML='<div class="card" style="text-align:center;padding:1.5rem;color:var(--text2)">Ingen opgaver i drivhuset endnu</div>';
+    return;
+  }
+  const statusB={planlagt:'b-blue',udført:'b-teal'};
+  el.innerHTML=drivhusOps.map(o=>`
+    <div class="card card-sm" style="display:flex;align-items:center;gap:12px">
+      <div class="task-type-icon" style="background:${typeBgDH[o.type]}"><i class="ti ${typeIconDH[o.type]}" style="color:${typeColDH[o.type]}"></i></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:500">${typeLblDH[o.type]} · ${o.bed}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px">${o.dato||''}${o.vol?' · '+o.vol:''}${o.note?' · '+o.note:''}</div>
+      </div>
+      <span class="badge ${statusB[o.status]}">${o.status}</span>
+      ${o.status!=='udført'?`<button class="btn btn-sm" onclick="setDHStatus(${o.id},'udført')">Udført</button>`:''}
+      <button class="btn btn-sm" style="color:var(--red)" onclick="deleteDHOpgave(${o.id})"><i class="ti ti-trash"></i></button>
+    </div>`).join('');
+}
+
+function setDHPrio(id,type,p){
+  const b=DRIVHUS_BEDE.find(x=>x.id===id);
+  if(!b) return;
+  if(type==='vand') b.vandPrio=p; else b.lugPrio=p;
+  renderDrivhus(); saveData();
+}
+function addDrivhusOpgave(){
+  const type=document.getElementById('dh-type').value;
+  const bed=document.getElementById('dh-bed').value.split(' ')[0];
+  const dato=document.getElementById('dh-dato').value;
+  const vol=document.getElementById('dh-vol').value;
+  const note=document.getElementById('dh-note').value;
+  drivhusOps.unshift({id:nextDhId++,type,bed,dato,vol,note,status:'planlagt'});
+  document.getElementById('dh-note').value='';
+  toggleForm('drivhus-form');
+  renderDrivhus(); saveData();
+}
+function setDHStatus(id,st){const o=drivhusOps.find(x=>x.id===id);if(o)o.status=st;renderDrivhus();saveData();}
+function deleteDHOpgave(id){drivhusOps=drivhusOps.filter(x=>x.id!==id);renderDrivhus();saveData();}
+function updateDHVolSelect(){
+  const el=document.getElementById('dh-vol');
+  if(!el) return;
+  el.innerHTML='<option value="">— Ikke tildelt —</option>'+frivillige.map(v=>`<option>${v.navn}</option>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// FRIVILLIG VISNING
+// ══════════════════════════════════════════════════════════════════
+
+function showVolView(){
+  document.getElementById('admin-shell').style.display='none';
+  document.getElementById('vol-shell').style.display='block';
+  renderVolVisning();
+}
+function hideVolView(){
+  document.getElementById('vol-shell').style.display='none';
+  document.getElementById('admin-shell').style.display='flex';
+}
+function renderVolVisning(){
+  const now=new Date();
+  const dagNavn=dagNavneDK[now.getDay()];
+  document.getElementById('vol-dato-txt').textContent=dagNavn+' '+fmtDato(now)+' · Mødetid 08:15';
+  const el=document.getElementById('vol-opgaver-visning');
+  const typeInfo={
+    vanding:{icon:'💧',bg:'#E8F0FA'},
+    lugning:{icon:'✂️',bg:'#EAF0E8'},
+    saaning:{icon:'🌱',bg:'#F0ECFC'},
+    host:{icon:'🧺',bg:'#FDF2DC'},
+    host_bestilling:{icon:'⚡',bg:'#FAEEDA'},
+  };
+  if(!dagOpgaver.length){
+    el.innerHTML='<div style="text-align:center;padding:3rem;color:var(--text2)">Ingen opgaver planlagt for i dag</div>';
+    return;
+  }
+  let html='<div style="font-size:13px;color:var(--text2);margin-bottom:16px">Opgaverne nedenfor skal klares inden frokost kl. 12:00</div>';
+  dagOpgaver.forEach((o,i)=>{
+    const info=typeInfo[o.type]||{icon:'📋',bg:'#F5F2EC'};
+    let titel='',sub='';
+    if(o.type==='vanding'){titel='Vanding';sub=o.blokke.map(b=>b.navn).join(', ');}
+    else if(o.type==='lugning'){titel=o.label;sub=o.blokke.map(b=>b.navn).join(', ');}
+    else if(o.type==='host_bestilling'){titel='⚡ Bestillingshøst';sub=o.opgave.note||'';}
+    else if(o.type==='saaning'){titel=(o.opgave.type==='saaning'?'Såning':'Udplantning')+' · '+o.opgave.bed;sub=o.opgave.afgr;}
+    else if(o.type==='host'){titel='Høst klar · '+o.opgave.bed;sub=o.opgave.afgr;}
+    html+=`<div class="vol-task">
+      <div class="vol-task-icon" style="background:${info.bg};font-size:20px">${info.icon}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:16px;font-weight:500;margin-bottom:4px">${titel}</div>
+        <div style="font-size:13px;color:var(--text2)">${sub}</div>
+      </div>
+      <div style="font-size:22px;font-weight:500;color:var(--border);font-family:'DM Serif Display',serif">${i+1}</div>
+    </div>`;
+  });
+  html+='<div style="text-align:center;margin-top:24px;padding:16px;background:var(--green-bg);border-radius:var(--radius-lg);color:var(--green);font-weight:500">God arbejdslyst! 🌿</div>';
+  el.innerHTML=html;
+}
+
+// ══════════════════════════════════════════════════════════════════
+// LOCALSTORAGE
+// ══════════════════════════════════════════════════════════════════
+
+const STORE_KEY = 'marken_data_v2';
+
+function saveData(){
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      markBlokke, nextBlokId, nextHistorikId,
+      frivillige, nextVolId,
+      vandSkema,
+      saanOps, nextSaaId,
+      hostOps, nextHostId,
+      kunder, nextKundeId,
+      bestillinger, nextBestId,
+      foelgesedler, nextFsId,
+      drivhusOps, nextDhId,
+      DRIVHUS_STATE: DRIVHUS_BEDE.map(b=>({id:b.id,vandPrio:b.vandPrio,lugPrio:b.lugPrio})),
+      dagsnoteHistorik,
+    }));
+    showSaved();
+  } catch(e){ console.warn('Gem fejl:', e); }
+}
+
+function loadData(){
+  try {
+    const raw=localStorage.getItem(STORE_KEY);
+    if(!raw) return;
+    const d=JSON.parse(raw);
+    if(d.markBlokke)    { markBlokke=d.markBlokke;       nextBlokId=d.nextBlokId||markBlokke.length+1; nextHistorikId=d.nextHistorikId||1; }
+    if(d.frivillige)    { frivillige=d.frivillige;        nextVolId=d.nextVolId||frivillige.length+1; }
+    if(d.saanOps)       { saanOps=d.saanOps;              nextSaaId=d.nextSaaId||saanOps.length+1; }
+    if(d.hostOps)       { hostOps=d.hostOps;              nextHostId=d.nextHostId||hostOps.length+1; }
+    if(d.kunder)        { kunder=d.kunder;                nextKundeId=d.nextKundeId||kunder.length+1; }
+    if(d.bestillinger)  { bestillinger=d.bestillinger;    nextBestId=d.nextBestId||bestillinger.length+1; }
+    if(d.foelgesedler)  { foelgesedler=d.foelgesedler;    nextFsId=d.nextFsId||foelgesedler.length+1; }
+    if(d.drivhusOps)    { drivhusOps=d.drivhusOps;        nextDhId=d.nextDhId||drivhusOps.length+1; }
+    if(d.dagsnoteHistorik) dagsnoteHistorik=d.dagsnoteHistorik;
+    if(d.vandSkema)     d.vandSkema.forEach((s,i)=>{ if(vandSkema[i]){ vandSkema[i].aktiv=s.aktiv; vandSkema[i].træk=s.træk; }});
+    if(d.DRIVHUS_STATE) d.DRIVHUS_STATE.forEach(s=>{ const b=DRIVHUS_BEDE.find(x=>x.id===s.id); if(b){ b.vandPrio=s.vandPrio||1; b.lugPrio=s.lugPrio||1; }});
+  } catch(e){ console.warn('Load fejl:', e); }
+}
+
+function showSaved(){
+  let el=document.getElementById('save-indicator');
+  if(!el){
+    el=document.createElement('div');
+    el.id='save-indicator';
+    el.style.cssText='position:fixed;bottom:16px;right:16px;background:#1C1C1A;color:#F5F2EC;font-size:12px;padding:6px 14px;border-radius:20px;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:999;font-family:monospace';
+    document.body.appendChild(el);
+  }
+  el.textContent='✓ Gemt';
+  el.style.opacity='1';
+  setTimeout(()=>el.style.opacity='0',1500);
+}
+
+// ══════════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════════
+
+loadData();
+
+// Sæt dagens dato som default
+const today = new Date().toISOString().split('T')[0];
+['saa-dato','best-dato','blok-dato','dh-dato'].forEach(id=>{
+  const el=document.getElementById(id); if(el) el.value=today;
+});
+
+// Mandagsplan: Bestillingshøst
+(function(){
+  const now=new Date();
+  const day=now.getDay();
+  const daysUntilMonday=(1-day+7)%7||7;
+  const mandag=new Date(now);
+  mandag.setDate(now.getDate()+daysUntilMonday);
+  const mandagStr=mandag.toISOString().split('T')[0];
+  const harHøst=saanOps.some(o=>o.afgr==='Bestillingshøst'&&o.dato===mandagStr);
+  if(!harHøst){
+    saanOps.unshift({id:nextSaaId++,type:'host_bestilling',bed:'—',dato:mandagStr,afgr:'Bestillingshøst',vol:'',note:'⚡ Topprioritet – skal nås inden frokost kl. 12:00',status:'planlagt'});
+  }
+})();
+
+updateVolSelects();
+renderDag();
+</script>
+</body>
+</html>
